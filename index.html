@@ -619,12 +619,7 @@
         </div>
       </div>
 
-      <div class="callout"><span class="t">Hva «dispatcher» betyr her</span>
-        «Egen app» = leverandørens <b>mobilapp koblet til økten som kjører på maskinen din</b> (Claude: Remote Control /
-        Dispatch · OpenAI: Codex i ChatGPT-appen · Copilot: remote control av CLI-økten fra GitHub.com / GitHub
-        Mobile). Poenget: du sender en oppgave fra telefonen, og den utføres på macen.</div>
-
-      <h3>Før du starter</h3>
+      <h3>Requirements</h3>
       <ul>
         <li class="po claude"><span class="pill">Claude</span> Et <b>Claude Pro</b>- eller <b>Max</b>-abonnement.
           Mobil-dispatch (Remote Control / Dispatch) er tilgjengelig på både Pro og Max.</li>
@@ -652,7 +647,8 @@ claude     # «Log in with Claude account», Pro/Max, ingen API-nøkkel</code></
       </div>
       <div class="po openai">
         <span class="pill">OpenAI · Codex</span>
-        <p>Last ned <b>Codex-skrivebordsappen for macOS</b> fra <a href="https://chatgpt.com/codex">chatgpt.com/codex</a>
+        <p>Last ned <b>Codex-skrivebordsappen for macOS</b> fra <a
+            href="https://chatgpt.com/codex">chatgpt.com/codex</a>
           og logg inn med ChatGPT-kontoen din («Sign in with ChatGPT», ingen API-nøkkel). Dette blir klienten din, og
           den lar deg styre Codex fra ChatGPT-mobilappen senere. Vil du heller jobbe i terminalen, installer Codex CLI:
         </p>
@@ -754,7 +750,8 @@ opencode   # start i [navn]OS-mappa</code></pre>
           på midt i økten med <code>/remote on</code>). CLI-en viser en QR-kode og en økt-spesifikk lenke; åpne den i
           <b>GitHub Mobile</b> eller på <b>GitHub.com</b>. Derfra ser du output i sanntid, svarer på spørsmål,
           godkjenner/avviser permission-forespørsler og planer, og sender nye prompts — alt mens <b>økten kjører
-            videre på macen din</b> (verktøy, shell og filer blir værende lokalt).</p>
+            videre på macen din</b> (verktøy, shell og filer blir værende lokalt).
+        </p>
         <div class="callout warn"><span class="t">Krav: GitHub-repo</span>
           Arbeidsmappa må være et git-repo som er hostet på GitHub.com, ellers får du «Remote session disabled: not in
           a GitHub repository». Gjør <code>[navn]OS</code> til et (privat) GitHub-repo først:
@@ -879,15 +876,57 @@ til i morgendagens prioriteringer.</code></pre>
           <p class="sub">Mellomnivå · fra svar til handling · bygger på Nivå 1</p>
         </div>
       </div>
+      <h3>Fortsett i arbeidsområdet ditt</h3>
+      Om du ikke har et arbeidsområde fra før, bygg det nå (Nivå 1). Det er her assistenten bor, og det er her den gjør
+      ting. Lag en mappe, og åpne AI-verktøyet ditt i den.
 
       <h3>Forslag 1: værmelding → klesvalg 🧥</h3>
       <pre><code>"Hent værmeldingen for Oslo i dag fra yr (api.met.no) og si i
 ÉN kort setning hva jeg bør ha på meg — regnjakke? votter? solkrem?
 Ikke gjengi hele værrapporten."</code></pre>
-      <h4>Hva den trenger tilgang til</h4>
-      <ul>
-        <li>Valgfritt: kalender (utemøte? sykkeltur?).</li>
-      </ul>
+      <h4>Legg til ekstra kontekst (valgfritt)</h4>
+      <p><span class="pill">MCP</span> Vær alene sier lite om <em>din</em> dag. Gi assistenten kalenderen din, så
+        skifter rådet karakter: utemøte → ta med paraply, sykkelpendling → vindjakke, formelt møte → ikke shorts.
+        Det enkleste er en <b>Google Calendar MCP</b> — en liten tjeneste som lar agenten lese (ikke endre) avtalene
+        dine.</p>
+      <div class="po claude"><span class="pill">Claude</span>
+        <p>Raskest: slå på den innebygde <b>Google Calendar-connectoren</b> i Claude-appen (Settings → Connectors).
+          Vil du heller ha en åpen MCP som funker likt overalt:</p>
+        <pre><code>claude mcp add gcal -- npx -y @cocal/google-calendar-mcp
+# Første gang: kjør `npx @cocal/google-calendar-mcp auth` for å logge inn med Google</code></pre>
+      </div>
+      <div class="po openai"><span class="pill">OpenAI · Codex</span>
+        <p>I <code>~/.codex/config.toml</code>:</p>
+        <pre><code>[mcp_servers.gcal]
+command = "npx"
+args = ["-y", "@cocal/google-calendar-mcp"]
+# Første gang: kjør `npx @cocal/google-calendar-mcp auth` for å logge inn med Google</code></pre>
+      </div>
+      <div class="po copilot"><span class="pill">GitHub Copilot</span>
+        <p>I Copilot sin MCP-konfig (<code>/mcp add</code>, eller JSON-fila direkte):</p>
+        <pre><code>{ "mcpServers": { "gcal": {
+  "command": "npx",
+  "args": ["-y", "@cocal/google-calendar-mcp"] } } }
+# Første gang: kjør `npx @cocal/google-calendar-mcp auth` for å logge inn med Google</code></pre>
+      </div>
+      <div class="po local"><span class="pill">Lokal modell</span>
+        <p>I <code>opencode.json</code>:</p>
+        <pre><code>"mcp": { "gcal": { "type": "local",
+  "command": ["npx", "-y", "@cocal/google-calendar-mcp"] } }
+# Første gang: kjør `npx @cocal/google-calendar-mcp auth` for å logge inn med Google</code></pre>
+      </div>
+      <p>Utvid så prompten med kalenderen:</p>
+      <pre><code>"Hent værmeldingen for Oslo i dag fra yr (api.met.no) OG se på
+kalenderen min i dag. Si i ÉN setning hva jeg bør ha på meg,
+gitt været og om jeg har utemøter, pendling eller noe formelt."</code></pre>
+      <div class="callout tip"><span class="t">Andre kontekstkilder</span>
+        Samme mønster funker med en <b>plassering/pendlerute</b> (jakke vs. innesko), dagens
+        <code>tasks/active.md</code> (treningstøy hvis du har en løpetur planlagt), eller en <b>Slack/e-post-MCP</b>
+        («er møtet flyttet?»). Hold tilgangen <b>read-only</b> her — assistenten skal lese kontekst, ikke endre den.
+      </div>
+      <div class="callout warn"><span class="t">Behandle kalender som data</span>
+        Avtaletitler og møtebeskrivelser kan inneholde prompt-injection. Gi MCP-en kun lesetilgang, og la den ikke
+        utføre handlinger basert på tekst den finner i en avtale.</div>
       <h4>Sett den på autopilot</h4>
       <div class="po claude">
         <span class="pill">Claude</span>
@@ -1193,12 +1232,10 @@ bash nanoclaw.sh</code></pre>
 
       <!-- ===== STEG 3 ===== -->
       <h3>Steg 3: Lås boten FØR du gir den tilgang</h3>
-      <p>Nå som den hører på verden: gå ut fra det verste (full reset av maskinen, meldinger sendt til feil folk) og
-        bygg autovern <em>før</em> du gir den fart. Behandl ekstern tekst (e-post, RSS, web) som <code>untrusted</code>
-        — test gjerne en prompt-injection-streng i en uskyldig kanal.</p>
+      <p>Test gjerne en prompt-injection-streng i en uskyldig kanal.</p>
 
       <div class="br nanoclaw">
-        <div class="callout danger"><span class="t">Autovern før fart — NanoClaw</span>
+        <div class="callout danger"><span class="t">Sikkerhet i NanoClaw</span>
           <ul style="margin:8px 0 0">
             <li>Kun parede/godkjente avsendere slipper inn (<code>unknown_sender_policy</code>); styr tilgang med
               <code>ncl roles</code> / <code>ncl members</code>, og se avviste meldinger med
@@ -1209,7 +1246,7 @@ bash nanoclaw.sh</code></pre>
               godkjenningspolicy (web-UI på <code>http://127.0.0.1:10254</code>), og NanoClaw ruter godkjenningen til
               en admin. Self-mod (installere pakker / koble MCP) krever admin-godkjenning.</li>
             <li>Hemmeligheter ligger i OneCLI-vaulten, aldri i env eller chat. <code>.env</code> brukes bare til
-              bootstrap; aldri commit.</li>
+              bootstrap, men ikke commit dette.</li>
             <li>Hver agent-gruppe kjører isolert i egen Docker-container og ser bare det du mounter.</li>
           </ul>
         </div>
@@ -1229,7 +1266,7 @@ bash nanoclaw.sh</code></pre>
       <!-- ===== STEG 4 ===== -->
       <h3>Steg 4: Gi den ekte capabilities + planlagte oppgaver</h3>
       <p>Koble på verktøy (MCP) så den faktisk <em>gjør</em> noe, og flytt Nivå 2-briefen din inn som en
-        tilbakevendende jobb.</p>
+        recurring jobb.</p>
       <table>
         <tr>
           <th>Idé</th>
@@ -1287,11 +1324,6 @@ ncl wirings create --messaging-group &lt;slack-hjemme&gt; --agent-group hjemme</
           ikke. Vil du ha én felles inngang som ruter videre, kan <code>dispatcher.md</code> kjøre som sin egen gruppe
           foran de andre.
         </p>
-        <div class="callout warn"><span class="t">Kjent fallgruve</span>
-          <code>ncl wirings create</code> oppretter i dag ikke automatisk en destinasjon for agent-gruppa
-          (<a href="https://github.com/nanocoai/nanoclaw/issues/2389">issue #2389</a>) — svar kan forsvinne stille.
-          Bruk den guidede <code>/manage-channels</code> i stedet, eller verifiser med en testmelding etter wiring.
-        </div>
       </div>
 
       <div class="br channels">
@@ -1299,10 +1331,6 @@ ncl wirings create --messaging-group &lt;slack-hjemme&gt; --agent-group hjemme</
           («be dev-spesialisten fikse CI»), og hver subagent har egen systemprompt og eget verktøysett. System-promptene
           i <code>agents/</code> blir subagent-definisjoner. Alt deler samme session og samme isolasjonsnivå som
           hovedøkten.</p>
-      </div>
-
-      <div class="done"><b>Ferdig med Nivå 3 når:</b>&nbsp;du sender én melding fra telefonen og får svar — fra
-        NanoClaw-boten i sin container, eller pushet inn i en kjørende Claude Code-session via Channels.
       </div>
     </section>
 
@@ -1312,50 +1340,30 @@ ncl wirings create --messaging-group &lt;slack-hjemme&gt; --agent-group hjemme</
         <div class="level-badge">4</div>
         <div>
           <h2>OpenClaw i en isolert VM</h2>
-          <p class="sub">Ekspert · maks isolasjon · egne legitimasjoner</p>
+          <p class="sub">Ekspert ·</p>
         </div>
       </div>
-      <div class="goal"><b>Mål:</b> Kjør den alltid-på assistenten fra Nivå 3 inne i en <b>engangs-VM</b>, helt
-        skilt fra Mac-en din. Går noe galt &mdash; en prompt-injection, en feilkommando &mdash; rammer det
-        bare VM-et, som du sletter og gjenskaper på minutter. Dine ekte filer er aldri i fare.</div>
 
-      <p class="provider-note" style="margin-top:0"><b>Modellstøtte:</b> Inne i VM-et kjører OpenClaw på sine egne
-        legitimasjoner. Tre spor virker her: <b>Claude</b> (API-nøkkel, eller gjenbruk av Claude Code-innlogging),
+      <p class="provider-note" style="margin-top:0"><b>Modellstøtte:</b> Inne i VM-et kjører OpenClaw gjennom
+        abonomentet ditt eller API-nøkkeler. Tre spor virker her: <b>Claude</b> (API-nøkkel, eller gjenbruk av Claude
+        Code-innlogging),
         <b>OpenAI</b> (Codex-abonnement via OAuth, eller <code>OPENAI_API_KEY</code>) og en <b>lokal
           OpenAI-kompatibel modell</b>.
       </p>
 
-      <div class="callout tip"><span class="t">Bygger på Nivå 3 — men bytter motor</span>
-        Konseptene er de samme som i Nivå 3 (alltid-på bot, kanaler, autovern), men motoren her er <b>OpenClaw</b> —
-        et større rammeverk enn NanoClaw/Channels. Det nye er både motoren og <em>hvor</em> den kjører: i en VM i
-        stedet for rett på Mac-en.
-      </div>
-
-      <h3>Hvorfor en hel VM, når Nivå 3 alt isolerer?</h3>
-      <p>NanoClaw kjører hver agent i en <b>container</b> &mdash; lett, men deler kjernen med verten. En full
-        <b>VM</b> har egen kjerne og eget filsystem, og kan <b>snapshot-es og rulles tilbake</b>. Når boten kjører
-        på egne legitimasjoner og hører på verden, er det den hardeste grensa du kan gi den uten en egen maskin.
-      </p>
-
       <h3>Steg 1: Spinn opp VM-et</h3>
-      <p><b>Default: Lume</b> &mdash; Cua sitt CLI for native VM-er på Apple Silicon (Apples
-        Virtualization.framework, opptil ~97 % av native CPU-fart).</p>
+      <p><b>Default: Lume</b> &mdash; Cua sitt CLI for native VM-er på Apple Silicon.</p>
       <div class="callout warn"><span class="t">Krav (Lume)</span>
-        Apple Silicon (M1–M4), macOS 13+, minst 8 GB RAM (16 GB anbefalt) og ~30 GB ledig disk.</div>
+        Apple Silicon (M1–M5), macOS 13+ og ~30 GB ledig disk.</div>
       <pre><code># Installer Lume
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/trycua/cua/main/libs/lume/scripts/install.sh)"
 
 # Lag og start en VM
 lume create assistent-vm --os macos --ipsw latest
 lume run assistent-vm</code></pre>
-      <div class="callout tip"><span class="t">Alternativ: Cua</span>
-        Ikke på Apple Silicon, eller vil du ha en lettere Linux-boks eller en <b>cloud-desktop</b>? Bruk
-        <b>Cua</b> (samme prosjekt som Lume) for managed sandkasser på macOS/Linux/Windows. Lume er det
-        enkleste lokale sporet; Cua er det fleksible.
-      </div>
 
       <h3>Steg 2: Installer OpenClaw <em>inni</em> VM-et</h3>
-      <p>Alt herfra skjer i terminalen <b>inne i VM-et</b>, akkurat som Nivå 3 Steg 1 &mdash; bare at verten din
+      <p>Alt herfra skjer i terminalen <b>inne i VM-et</b>, akkurat som Nivå 3 Steg 1, bare at hostenmaskinen
         ikke ser noe av det:</p>
       <pre><code># Krever Node 24 (anbefalt) eller Node 22.19+
 npm install -g openclaw@latest
@@ -1368,15 +1376,14 @@ openclaw gateway status             # Control UI: http://127.0.0.1:18789/ (inne 
 
       <h3>Steg 3: Velg modell og auth (inne i VM-et)</h3>
       <p>Modellen velges som <code>provider/modell-id</code> under <code>agents.defaults.model</code> i
-        <code>~/.openclaw/openclaw.json</code>. Dette er den eneste delen som varierer per leverandør &mdash; resten
-        av OpenClaw (workspace, skills, autovern) er likt:
+        <code>~/.openclaw/openclaw.json</code>. Dette er den eneste delen som varierer per leverandør, men resten
+        av OpenClaw (workspace, skills) er likt:
       </p>
       <div class="po claude">
         <span class="pill">Claude</span>
         <div class="callout warn"><span class="t">Historikk: abonnement-OAuth ble sperret april 2026</span>
           Anthropic stengte tredjeparts OAuth-bruk av Claude-abonnement 4. april 2026 (tredjepartsverktøy trekker nå
-          fra «extra usage»). OpenClaw-docs oppgir at Claude CLI-gjenbruk nå er sanksjonert igjen — men API-nøkkel er
-          det mest forutsigbare sporet i en VM.</div>
+          fra «extra usage»).Sjekk OpenClaw docs om Claude Code er tilgengelig igjen.</div>
         <p>To måter:</p>
         <ul>
           <li><b>API-nøkkel:</b> sett <code>ANTHROPIC_API_KEY</code> i VM-ets miljø og velg modell:</li>
@@ -1404,7 +1411,8 @@ openclaw models status</code></pre>
           <li><b>Codex-abonnement (OAuth):</b> kjør <code>openclaw onboard --auth-choice openai-codex</code> (eller
             <code>openclaw models auth login --provider openai-codex</code>; legg på <code>--device-code</code> i
             headless VM). Ingen API-nøkkel &mdash; auth kommer fra ChatGPT/Codex-kontoen din, og OpenAI tillater
-            eksplisitt abonnement-OAuth i verktøy som OpenClaw.</li>
+            eksplisitt abonnement-OAuth i verktøy som OpenClaw.
+          </li>
           <li><b>API-nøkkel:</b> sett <code>OPENAI_API_KEY</code> i VM-ets miljø. Mest forutsigbart for en alltid-på
             gateway-host.</li>
         </ul>
@@ -1431,7 +1439,7 @@ openclaw models status            # bekreft primary + auth</code></pre>
             <code>ollama pull &lt;modell&gt;</code>, og bruk modell-ref <code>ollama/&lt;modell&gt;</code>.
           </li>
           <li><b>oMLX på verten</b>: la oMLX servere på <code>http://&lt;vert-IP&gt;:8000/v1</code> og registrer den
-            som egen provider. Bruk vertens IP &mdash; <em>ikke</em> <code>localhost</code>, som inne i VM-et peker på
+            som egen provider. Bruk hostens IP &mdash; <em>ikke</em> <code>localhost</code>, som inne i VM-et peker på
             VM-et selv.</li>
         </ul>
         <p>Egen provider mot oMLX i <code>~/.openclaw/openclaw.json</code>:</p>
@@ -1467,21 +1475,12 @@ openclaw models status            # bekreft primary + auth</code></pre>
         <ul style="margin:8px 0 0">
           <li><b>DM-pairing</b> står på som standard (<code>dmPolicy="pairing"</code>): ukjente avsendere får bare en
             pairing-kode. Godkjenn deg selv med <code>openclaw pairing approve &lt;kanal&gt; &lt;kode&gt;</code>.</li>
-          <li>Kjør ikke-<code>main</code>-sesjoner i sandkasse: <code>agents.defaults.sandbox.mode: "non-main"</code>
-            (Docker er default-backend). Standard sandkasse tillater <code>bash/read/write/edit</code> og nekter
-            <code>browser/nodes/cron/gateway</code>.
-          </li>
           <li>Behandl innkommende DM-er og ekstern tekst som <code>untrusted</code>.</li>
-          <li>Nøkler/tokens bor i VM-ets miljø eller auth-store, aldri på verten og aldri i git.</li>
-          <li><b>Ta en snapshot av VM-et</b> i ren tilstand <em>før</em> du legger inn betalt auth. Noe muffens
+          <li>Noe muffens
             &rarr; <code>lume stop</code>, slett, gjenskap fra snapshot.</li>
           <li>Kjør <code>openclaw doctor</code> for å fange risikabel DM-policy.</li>
         </ul>
       </div>
-
-      <div class="done"><b>Ferdig med Nivå 4 når:</b>&nbsp;assistenten din svarer fra mobilen akkurat som på Nivå 3
-        &mdash; men kjører på egne legitimasjoner inne i en VM du kan slette og gjenskape, helt skilt fra dine ekte
-        filer.</div>
     </section>
 
     <!-- ============ LOKAL MODELL (egen side) ============ -->
@@ -1528,7 +1527,7 @@ curl http://localhost:8000/v1/chat/completions \
       <hr>
       <h3 id="sikkerhet">Sikkerhet: gjelder alle nivåer</h3>
       <ul class="check">
-        <li>Start i en testmappe. Gi aldri en ny agent tilgang til hjemmemappen.</li>
+        <li>Ikke gi assistenten din tilgang til hjemmemappen på maskinen...</li>
         <li>Behandl ekstern tekst (e-post, web, RSS, andres meldinger) med forsiktighet.</li>
         <li>Installer kun verktøy/plugins/MCP-servere du stoler på, med minst mulig tilganger.</li>
       </ul>
