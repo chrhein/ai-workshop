@@ -4,7 +4,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>AI-assistent workshop</title>
+  <title>AI-utviklerverktøy workshop</title>
   <style>
     :root {
       --bg: #ffffff;
@@ -14,32 +14,12 @@
       --ink: #1a1d23;
       --muted: #5b6472;
       --code-bg: #f4f5f8;
-      --accent: #c084fc;
-      --accent-soft: rgba(192, 132, 252, .14);
+      --accent: #d98c5f;
+      --accent-soft: rgba(217, 140, 95, .16);
       --ok: #4ade80;
       --warn: #fbbf24;
       --danger: #f87171;
       --r: 14px;
-    }
-
-    body[data-provider="claude"] {
-      --accent: #d98c5f;
-      --accent-soft: rgba(217, 140, 95, .16);
-    }
-
-    body[data-provider="openai"] {
-      --accent: #10b981;
-      --accent-soft: rgba(16, 185, 129, .15);
-    }
-
-    body[data-provider="copilot"] {
-      --accent: #8957e5;
-      --accent-soft: rgba(137, 87, 229, .15);
-    }
-
-    body[data-provider="local"] {
-      --accent: #3b82f6;
-      --accent-soft: rgba(59, 130, 246, .15);
     }
 
     * {
@@ -154,73 +134,25 @@
       white-space: nowrap
     }
 
-    .seg button .dot {
-      width: 9px;
-      height: 9px;
-      border-radius: 50%
-    }
-
-    .seg button[data-v="claude"] .dot {
-      background: #d98c5f
-    }
-
-    .seg button[data-v="openai"] .dot {
-      background: #10b981
-    }
-
-    .seg button[data-v="copilot"] .dot {
-      background: #8957e5
-    }
-
-    .seg button[data-v="local"] .dot {
-      background: #3b82f6
-    }
-
-    .seg button.active {
-      background: var(--accent-soft);
-      color: var(--ink)
-    }
-
     .seg.levels button.active {
       background: var(--accent);
       color: #0b0d12
     }
 
-    .local-group {
-      margin-left: auto
-    }
-
-    .local-btn {
-      appearance: none;
-      border: 1px solid var(--line);
-      background: var(--panel);
+    /* aktiv MCP-verktøy-fane (branch-velgeren) */
+    .seg.branches button.active {
+      background: var(--accent-soft);
       color: var(--ink);
-      font: inherit;
-      font-weight: 600;
-      font-size: 14px;
-      padding: 8px 16px;
-      border-radius: 999px;
-      cursor: pointer;
-      white-space: nowrap
+      box-shadow: inset 0 0 0 1px var(--accent)
     }
 
-    .local-btn:hover {
-      background: var(--panel-2)
-    }
-
-    .local-btn.active {
-      background: var(--accent);
-      color: #0b0d12;
-      border-color: var(--accent)
-    }
-
-    .provider-note {
-      margin-top: 10px;
+    .clienthint {
+      margin-left: auto;
       font-size: 13.5px;
       color: var(--muted)
     }
 
-    .provider-note b {
+    .clienthint b {
       color: var(--ink)
     }
 
@@ -314,13 +246,6 @@
       margin: 30px 0
     }
 
-    .step {
-      counter-increment: step;
-      position: relative;
-      padding: 2px 0 2px 0;
-      margin: 14px 0
-    }
-
     .steps {
       list-style: none;
       padding-left: 0;
@@ -352,6 +277,7 @@
     }
 
     pre {
+      position: relative;
       background: var(--code-bg);
       border: 1px solid var(--line);
       border-radius: 10px;
@@ -359,6 +285,48 @@
       overflow: auto;
       margin: 10px 0;
       font-size: 13.5px
+    }
+
+    .copy-btn {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      appearance: none;
+      border: 1px solid var(--line);
+      background: var(--bg);
+      color: var(--muted);
+      font: inherit;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+      padding: 4px 9px;
+      border-radius: 7px;
+      cursor: pointer;
+      opacity: 0;
+      transition: opacity .12s ease, color .12s ease, border-color .12s ease
+    }
+
+    pre:hover .copy-btn,
+    .copy-btn:focus-visible {
+      opacity: 1
+    }
+
+    .copy-btn:hover {
+      color: var(--ink);
+      border-color: var(--accent)
+    }
+
+    .copy-btn.copied {
+      opacity: 1;
+      color: var(--ok);
+      border-color: var(--ok)
+    }
+
+    @media (hover: none) {
+      .copy-btn {
+        opacity: 1
+      }
     }
 
     code {
@@ -408,18 +376,6 @@
       margin: 16px 0
     }
 
-    .grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 14px
-    }
-
-    @media(max-width:640px) {
-      .grid {
-        grid-template-columns: 1fr
-      }
-    }
-
     .callout {
       border-radius: 10px;
       padding: 13px 16px;
@@ -461,46 +417,21 @@
       color: var(--danger)
     }
 
-    /* provider filtering */
-    .po {
-      display: none
-    }
-
-    body[data-provider="claude"] .po.claude,
-    body[data-provider="openai"] .po.openai,
-    body[data-provider="copilot"] .po.copilot,
-    body[data-provider="local"] .po.local {
-      display: block
-    }
-
-    /* Nivå 3 branch filtering (independent of leverandør) */
+    /* branch / menyvalg-filtrering (Nivå 3 MCP-meny) */
     .branch-pick {
-      margin: 4px 0 18px
+      margin: 4px 0 18px;
+      flex-wrap: wrap
     }
 
     .br {
       display: none
     }
 
-    .level[data-branch="nanoclaw"] .br.nanoclaw,
-    .level[data-branch="channels"] .br.channels {
+    .level[data-branch="playwright"] .br.playwright,
+    .level[data-branch="figma"] .br.figma,
+    .level[data-branch="jira"] .br.jira,
+    .level[data-branch="docs"] .br.docs {
       display: block
-    }
-
-    .modelopt {
-      border-left: 3px solid var(--line);
-      padding: 6px 0 6px 16px;
-      margin: 14px 0
-    }
-
-    .modelopt>.lbl {
-      display: inline-block;
-      font-weight: 700;
-      font-size: .82rem;
-      letter-spacing: .02em;
-      text-transform: uppercase;
-      color: var(--muted);
-      margin-bottom: 6px
     }
 
     .pill {
@@ -547,324 +478,204 @@
       color: var(--muted);
       font-size: 14px
     }
-
-    .done {
-      display: flex;
-      gap: 10px;
-      align-items: center;
-      background: rgba(74, 222, 128, .08);
-      border: 1px solid rgba(74, 222, 128, .3);
-      border-radius: 10px;
-      padding: 12px 16px;
-      margin: 22px 0 6px;
-      color: var(--ink)
-    }
-
-    .done b {
-      color: var(--ok)
-    }
   </style>
 </head>
 
-<body data-provider="claude">
+<body>
 
   <header class="hero">
     <div class="wrap">
-      <h1>Personlig AI-assistent workshop</h1>
-      <p class="lede">Bygg din egen AI-assistent fra bunnen.
-        Velg AI leverandør og nivå.</p>
+      <span class="kicker">Sommerjobb · AI-utviklerverktøy</span>
+      <h1>AI i utviklerhverdagen</h1>
+      <p class="lede">Fem korte, praktiske nivåer i Claude Code som du kjører på din egen sommerjobb-kode.
+        Teorien tok vi i presentasjonen; her gjør vi det.</p>
     </div>
   </header>
 
   <div class="controls">
     <div class="wrap">
       <div class="ctl-row">
-        <div class="ctl-group" id="provGroup">
-          <span class="ctl-label">AI-leverandør</span>
-          <div class="seg providers" id="providerSeg">
-            <button data-v="claude" class="active"><span class="dot"></span>Claude</button>
-            <button data-v="openai"><span class="dot"></span>OpenAI · Codex</button>
-            <button data-v="copilot"><span class="dot"></span>GitHub Copilot</button>
-            <button data-v="local"><span class="dot"></span>Lokal modell</button>
-          </div>
-        </div>
         <div class="ctl-group">
-          <span class="ctl-label">Ditt nivå</span>
+          <span class="ctl-label">Tema</span>
           <div class="seg levels" id="levelSeg">
-            <button data-l="1" class="active">Nivå 1</button>
-            <button data-l="2">Nivå 2</button>
-            <button data-l="3">Nivå 3</button>
-            <button data-l="4">Nivå 4</button>
+            <button data-l="0" class="active">Før vi begynner</button>
+            <button data-l="1">1 · Tips</button>
+            <button data-l="2">2 · Skills</button>
+            <button data-l="3">3 · MCP</button>
+            <button data-l="4">4 · Tokenoptimalisering</button>
+            <button data-l="5">5 · Avansert bruk</button>
           </div>
         </div>
-        <div class="ctl-group local-group">
-          <span class="ctl-label">&nbsp;</span>
-          <button class="local-btn" id="localBtn">🖥️ Sett opp en modell lokalt</button>
-        </div>
+        <p class="clienthint">Verktøy: <b>Claude Code</b> (Desktop-appen eller terminalen), pekt mot ditt eget
+          sommerjobb-repo.</p>
       </div>
-      <p class="provider-note" id="provNote"></p>
     </div>
   </div>
 
   <div class="wrap">
 
+    <!-- ============ FØR VI BEGYNNER ============ -->
+    <section class="level active" data-level="0">
+      <div class="level-head">
+        <div class="level-badge">0</div>
+        <div>
+          <h2>Før vi begynner</h2>
+          <p class="sub">Én felles oppgave, helt uten føringer</p>
+        </div>
+      </div>
+
+      <div class="goal"><b>Mål:</b> Alle gir den nøyaktig samme prompten og lar AI-en ta <em>alle</em> valg selv.
+        Etterpå sammenligner vi: hvor ulikt blir resultatet, både koden og det visuelle, når ingen styrer teknologi,
+        design eller datakilde? Dette er nullpunktet vi måler resten av workshopen mot.</div>
+
+      <h3>1) Start i en tom mappe</h3>
+      <p>Ikke bruk et eksisterende prosjekt her. Lag en fersk, tom mappe og åpne Claude Code i den (koble til mappa i
+        Desktop-appen, eller <code>cd</code> inn og kjør <code>claude</code> i terminalen).</p>
+      <pre><code>mkdir vaer-oslo &amp;&amp; cd vaer-oslo
+claude</code></pre>
+
+      <h3>2) Lim inn denne prompten, ordrett</h3>
+      <p>Ikke legg til, fjern eller presiser noe. Alle skal kjøre nøyaktig det samme:</p>
+      <pre><code>"Lag en nettside som viser værmeldingen for Oslo i morgen.
+
+Du tar alle valg selv: teknologi, design, datakilde, alt.
+Ikke bruk skills eller andre instruksjonsfiler.
+Ikke spør meg om noe som helst underveis. Bygg den helt
+ferdig, og si ifra først når den er klar til å åpnes."</code></pre>
+
+      <h3>3) La den jobbe helt ferdig</h3>
+      <p>Ikke avbryt, ikke styr, og ikke svar med føringer. Godkjenn det den trenger for å komme videre, men la den ta
+        alle de faglige valgene alene. Poenget er å se hva den lander på helt uten hjelp fra deg.</p>
+
+      <h3>4) Åpne resultatet og sammenlign</h3>
+      <p>Når den er ferdig, åpne siden i nettleseren. Sammenlign med dem rundt deg:</p>
+      <ul>
+        <li>Hvilken <b>stack</b> valgte den? En ren HTML-fil, React, et rammeverk, en byggeprosess?</li>
+        <li>Hvordan ser det <b>visuelt</b> ut, og hvor mye kode ble det?</li>
+        <li>Hentet den <b>ekte værdata</b> (f.eks. fra et API), eller fant den på tallene?</li>
+        <li>Funker «i morgen» faktisk, eller viser den dagens vær?</li>
+      </ul>
+      <div class="callout tip"><span class="t">Hva vi lærer av dette</span>
+        Samme prompt gir vidt forskjellige resultater. Det er nettopp derfor resten av workshopen handler om å gi
+        agenten retning: branch, plan, kontekst og presise prompter (Tips-fanen) er forskjellen mellom «den gjettet»
+        og «den gjorde det jeg mente».
+      </div>
+    </section>
+
     <!-- ============ NIVÅ 1 ============ -->
-    <section class="level active" data-level="1">
+    <section class="level" data-level="1">
       <div class="level-head">
         <div class="level-badge">1</div>
         <div>
-          <h2>Kom i gang: bygg ditt første arbeidsområde <bold>"[ditt-navn]OS"</bold>
-          </h2>
-          <p class="sub">Nybegynner · ingen forkunnskaper · 40–50 min</p>
+          <h2>Bruk Claude Code best mulig</h2>
+          <p class="sub">Fem vaner som hever kvaliteten</p>
         </div>
       </div>
 
-      <h3>Requirements</h3>
+      <div class="goal"><b>Mål:</b> Dere har brukt Claude Code i prosjektene deres allerede. Her er fem vaner som
+        skiller en frustrerende økt fra en god en. De gjelder likt enten du kjører Claude Code i
+        <b>Desktop-appen</b> eller i <b>terminalen</b>.</div>
+
+      <div class="callout tip"><span class="t">Desktop eller terminal?</span>
+        Samme agent under panseret. I <b>Desktop-appen</b> kobler du Claude til en mappe (Cowork) og jobber visuelt.
+        I <b>terminalen</b> gjør du <code>cd</code> inn i repoet og kjører <code>claude</code>. Alle tipsene under er
+        like i begge.
+      </div>
+
+      <h3>1) Begynn alltid på en ny branch</h3>
+      <p>Lag en egen branch før du slipper agenten løs. Da kan du se hele diffen samlet, kaste alt med ett knappetrykk
+        hvis det går skeis, og holde <code>main</code> ren.</p>
+      <pre><code>git switch -c ai-eksperiment</code></pre>
+      <p>I terminalen kjører du den selv først; i Desktop-appen kan du be agenten gjøre det, eller bruke git-klienten
+        din. Poenget er det samme: la aldri en agent jobbe rett på <code>main</code>, eller i en haug med ucommittede
+        endringer du ikke kan rulle tilbake.</p>
+
+      <h3>2) Start større endringer med en planleggingsoppgave</h3>
+      <p>For alt som er større enn en triviell endring: be om en <em>plan</em> først, ikke kode. Lar du agenten
+        kartlegge implementasjonsplanen, lese relevant kode og legge fram stegene før den rører noe, fanger du gale
+        antakelser mens de er gratis å rette, i stedet for etter at tolv filer er endret.</p>
+      <pre><code>"Ikke skriv kode ennå. Les deg inn i hvordan X funker i dag og legg
+fram en steg-for-steg plan for å gjøre Y: hvilke filer, hvilken
+rekkefølge, og hva som må testes. Vent på at jeg godkjenner planen."</code></pre>
+      <p>Claude Code har en egen <b>planmodus</b> som lar agenten utforske og planlegge uten å endre filer før du har
+        godkjent planen (i terminalen veksler du modus med <kbd>Shift</kbd>+<kbd>Tab</kbd>). Bruk den på store
+        oppgaver. Det gir mindre rom for feil og færre bortkastede tokens.</p>
+
+      <h3>3) Kontekst er alt (og hvorfor det er så viktig)</h3>
+      <p>Konteksten er alt agenten «ser» akkurat nå: instruksjonene dine, filene den har lest, og samtalen så langt.
+        Kvaliteten på svaret henger nesten alltid på kvaliteten på konteksten. To sider av samme sak:</p>
       <ul>
-        <li class="po claude"><span class="pill">Claude</span> Et <b>Claude Pro</b>- eller <b>Max</b>-abonnement.
-          Mobil-dispatch (Remote Control / Dispatch) er tilgjengelig på både Pro og Max.</li>
-        <li class="po openai"><span class="pill">OpenAI</span> En <b>ChatGPT</b>-konto (Codex følger med
-          Plus/Pro/Business/Edu/Enterprise; mobil-dispatch krever macOS-versjonen av Codex-appen).</li>
-        <li class="po copilot"><span class="pill">GitHub Copilot</span> Et <b>Copilot Pro / Pro+ / Business /
-            Enterprise</b>-abonnement. Mobil-styring skjer via <b>remote control av Copilot CLI</b> fra GitHub.com /
-          GitHub Mobile. Får du Copilot-setet fra en organisasjon, må en org-/enterprise-eier først sette policyen
-          «Store local sessions in the Cloud» til «View and control» (ukonfigurert som standard).</li>
-        <li class="po local"><span class="pill">Lokal modell</span> En Apple Silicon-Mac med en lokal modell som
-          svarer på <code>http://localhost:8000</code> — sett den opp via <b>🖥️ Sett opp en modell lokalt</b> først.
-        </li>
+        <li><b>Gi den riktig kontekst.</b> Pek på de relevante filene, lim inn hele feilmeldingen, forklar hvorfor.
+          En agent som mangler kontekst gjetter, og gjetting blir feil.</li>
+        <li><b>Ikke drukne den i kontekst.</b> Vinduet er begrenset. Dumper du inn hele filer, eller lar én økt dra
+          på gjennom ti urelaterte oppgaver, fylles vinduet med støy og svarene blir dårligere. Start friskt når du
+          bytter oppgave (<code>/clear</code> i terminalen, ny chat i appen).</li>
+      </ul>
+      <p>Det agenten alltid bør ha, legger du i <code>CLAUDE.md</code> i repoet: stack, viktige kommandoer og regler.
+        Da slipper du å gjenta deg selv hver økt, og det bidrar ikke til støyen i konteksten.</p>
+
+      <h3>4) Vit hva harnesset har tilgang til</h3>
+      <p>Claude Code er ikke bare en modell. Det er et <b>harness</b> rundt modellen som gir den verktøy. Vit hva den
+        faktisk kan røre:</p>
+      <ul>
+        <li><b>Filer i arbeidsmappa:</b> lese, redigere, opprette og slette.</li>
+        <li><b>Shellet:</b> kjøre kommandoer (tester, git, byggesteg, alt du selv kan kjøre).</li>
+        <li><b>Nettet og MCP-servere</b> du kobler på (Nivå 3).</li>
+        <li><b>Subagenter</b> den kan delegere avgrensede deloppgaver til.</li>
+      </ul>
+      <p>Alt dette ligger bak et <b>permission-lag</b>: med godkjenning på spør agenten før den endrer eller kjører
+        noe. To ting følger av det:</p>
+      <ul>
+        <li>Den når i praksis alt <em>du</em> når fra den mappa. Derfor: ikke start den i hjemmemappa eller et sted
+          fullt av hemmeligheter den ikke trenger.</li>
+        <li>Den ser bare mappa du har pekt den mot: den du koblet til via Cowork i Desktop-appen, eller den du kjørte
+          <code>claude</code> i terminalen. Utenfor det ser den ingenting før du gir den tilgang.</li>
       </ul>
 
-      <h3>1) Velg og sett opp klienten</h3>
-      <div class="po claude">
-        <span class="pill">Claude</span>
-        <p>Last ned <b>Claude-appen</b> fra <a href="https://claude.ai/download">claude.ai/download</a>, logg inn med og
-          bruk <b>Cowork</b> til å koble appen til en mappe på maskinen. Dette blir ditt arbeiidsområde, din
-          <code>[navn]OS</code> i neste steg. Vil du heller jobbe i terminalen, installer Claude Code:
-        </p>
-        <pre><code># Terminal-alternativ (valgfritt)
-curl -fsSL https://claude.ai/install.sh | bash
-claude     # «Log in with Claude account», Pro/Max, ingen API-nøkkel</code></pre>
+      <h3>5) Skriv presise prompter</h3>
+      <p>Kvaliteten på svaret følger kvaliteten på prompten. NAV har en god oversikt i
+        <a href="https://ki-utvikling.nav.no/praksis/guide/skrive-presise-prompts">guiden om å skrive presise
+        prompter</a>; her er kjernen:</p>
+      <ul>
+        <li><b>Vær spesifikk, ikke vag.</b> Ikke «fiks auth-bugen», men hva som faktisk skjer:
+          <em>«Brukere får 'Invalid token' etter 30 minutter. JWT-tokens er satt til å utløpe etter 1 time i
+          <code>auth.config.ts</code>. Finn hvorfor.»</em> Jo mer presist du beskriver problemet, jo mer presist
+          blir svaret.</li>
+        <li><b>Gi eksempler på forventet output.</b> Vis heller enn å forklare:
+          <em>«formatér beløp i norsk format: <code>formatNOK(1234.5)</code> skal gi <code>"1 234,50 kr"</code>».</em></li>
+        <li><b>Tenk WRAP.</b> <b>W</b>rite (forklar som til en junior), <b>R</b>efine (legg på relevant kontekst),
+          <b>A</b>tomic (del opp i små oppgaver), <b>P</b>air (vurder og styr underveis, ikke fyr og glem).</li>
+        <li><b>Unngå anti-mønstre.</b> «Vær mer nøyaktig» sier ingenting. Eksterne lenker følges ofte ikke, så lim inn
+          innholdet i stedet. Og tvetydige referanser som «den funksjonen» bør du gjøre konkrete.</li>
+      </ul>
+      <p style="font-size:13.5px;color:var(--muted)">Du kjenner igjen <em>del opp</em> og <em>gi kontekst</em> fra
+        punkt 2 og 3 over. Det er ikke tilfeldig: presise prompter, planlegging og konteksthåndtering er tre sider av
+        samme sak.</p>
+
+      <h3>Vil du gjøre det proft? Spec-Driven Development</h3>
+      <p>På ekte kundeprosjekt lønner det seg å være enda mer strukturert enn punkt 2 over. GitHubs
+        <a href="https://github.com/github/spec-kit">spec-kit</a> er et åpent verktøy for <b>Spec-Driven
+        Development</b>: i stedet for å prompte ad hoc lar du en spesifikasjon drive arbeidet, og agenten følger
+        faste steg fra krav til ferdig kode.</p>
+      <ul>
+        <li><b>Constitution</b> &middot; prinsipper og rammer for prosjektet</li>
+        <li><b>Specify</b> &middot; funksjonelle krav og brukerhistorier</li>
+        <li><b>Clarify</b> &middot; fjern tvetydigheter i spesifikasjonen</li>
+        <li><b>Plan</b> &middot; teknisk plan og valg av stack</li>
+        <li><b>Tasks</b> &middot; bryt planen ned i konkrete, ordnede oppgaver</li>
+        <li><b>Implement</b> &middot; gjennomfør oppgavene systematisk</li>
+      </ul>
+      <p>Hvert steg er en slash-kommando (<code>/speckit.specify</code>, <code>/speckit.plan</code>, …) som funker rett
+        i Claude Code. Resultatet blir sporbart og etterprøvbart, og lett for andre å ta over. Nettopp det du vil ha
+        på et kundeoppdrag, der beslutninger må kunne forsvares og dokumenteres.</p>
+      <pre><code># Krever Python 3.11+ og Git
+uv tool install specify-cli --from git+https://github.com/github/spec-kit.git</code></pre>
+
+      <div class="callout warn"><span class="t">Oppsummert</span>
+        Egen branch, plan før kode på det store, mat den med riktig (ikke for mye) kontekst, vit hva den kan røre, og
+        skriv presise prompter. Disse fem tar deg langt, og på større kundeprosjekt gir Spec-Driven Development med
+        spec-kit deg en profesjonell ramme rundt det hele.
       </div>
-      <div class="po openai">
-        <span class="pill">OpenAI · Codex</span>
-        <p>Last ned <b>Codex-skrivebordsappen for macOS</b> fra <a
-            href="https://chatgpt.com/codex">chatgpt.com/codex</a>
-          og logg inn med ChatGPT-kontoen din («Sign in with ChatGPT», ingen API-nøkkel). Dette blir klienten din, og
-          den lar deg styre Codex fra ChatGPT-mobilappen senere. Vil du heller jobbe i terminalen, installer Codex CLI:
-        </p>
-        <pre><code># Terminal-alternativ (valgfritt)
-curl -fsSL https://chatgpt.com/codex/install.sh | sh
-# eller: npm install -g @openai/codex
-
-codex      # «Sign in with ChatGPT», ikke API-nøkkel</code></pre>
-      </div>
-      <div class="po copilot">
-        <span class="pill">GitHub Copilot</span>
-        <p>Installer <b>GitHub Copilot-appen</b> (desktop, macOS/Windows/Linux — teknisk preview) eller Copilot CLI,
-          og logg inn med GitHub-kontoen din:</p>
-        <pre><code>npm install -g @github/copilot
-copilot    # naviger først til [navn]OS-mappa; godkjenn at du stoler på filene</code></pre>
-        <p>Copilot kjører hver agent-økt i sin egen git-worktree — fint når du vil la flere oppgaver gå parallelt.</p>
-      </div>
-      <div class="po local">
-        <span class="pill">Lokal modell</span>
-        <p>Sjekk at modellen din svarer på <code>http://localhost:8000</code> (se <b>🖥️ Sett opp en modell lokalt</b>),
-          og installer <b>OpenCode</b> som terminal-klient:</p>
-        <pre><code>npm install -g opencode-ai
-# Pek OpenCode på den lokale modellen i opencode.json:
-#   "provider": { "lokal": { "npm": "@ai-sdk/openai-compatible",
-#     "options": { "baseURL": "http://localhost:8000/v1" },
-#     "models": { "mlx-community/Qwen3.6-35B-A3B-4bit": {} } } }
-opencode   # start i [navn]OS-mappa</code></pre>
-        <p><code>baseURL</code> må ende på <code>/v1</code>. API-nøkkelen kan være hva som helst (f.eks.
-          <code>local</code>).
-        </p>
-      </div>
-
-      <h3>2) Bygg arbeidsområdet ditt: <code>[navn]OS</code> <span style="color:var(--muted);font-weight:400">· 2
-          min</span></h3>
-      <p>Assistenten trenger en mappe å bo i. Lag den i Finder, eller bare be agenten gjøre det:</p>
-      <pre><code>"Lag en mappe som heter hakonOS i Documents, med undermappene
- meetings/raw, meetings/summaries, daily-notes og tasks.
- Lag også en tom tasks/active.md."</code></pre>
-      <p>Strukturen din ser nå slik ut:</p>
-      <pre><code>hakonOS/
-  meetings/
-    raw/          (dump møtenotater her gjennom dagen)
-    summaries/    (agenten lager rene oppsummeringer)
-  daily-notes/    (én fil per dag)
-  tasks/
-    active.md     (alle aktive oppgaver)</code></pre>
-      <p>Pek klienten din mot denne mappa (koble til mappa i appen, eller <code>cd</code> inn i <code>hakonOS</code>
-        og start agenten der).</p>
-
-      <h3>3) Gjør assistenten til <em>din</em> <span style="color:var(--muted);font-weight:400">· persona +
-          brukerkontekst, før første arbeidsflyt</span></h3>
-      <p>Gjør dette <b>før</b> du gir den en jobb: en agent som vet hvem du er og hvordan du vil ha det, gir
-        brukbare svar fra første prompt. Lag en instruksjonsfil i <code>[navn]OS</code> som klienten leser automatisk.
-        Fyll ut denne lille malen — den er din:</p>
-      <pre><code># Om meg (brukerkontekst)
-- Navn / rolle:
-- Hva jeg jobber med til daglig:
-- Verktøy jeg bruker (kalender, repo, chat …):
-- Tidssone og arbeidstid:
-
-# Slik vil jeg at du jobber (persona + standing orders)
-- Mål for assistenten: hva skal den hjelpe meg med?
-- Tone: (kort/uformell/direkte …)   ·   Språk: norsk
-- ALLTID: vis hva du gjør før du skriver/sletter filer; grupper
-  action items som [HØY]/[MEDIUM]/[LAV].
-- ALDRI: rør .env eller secrets/; gjett på datoer/frister.</code></pre>
-      <p>Hvor fila skal ligge avhenger av klienten:</p>
-      <div class="po claude"><span class="pill">Claude</span>
-        <p>Lagre som <code>CLAUDE.md</code> i <code>[navn]OS</code> (eller lim inn som «Project instructions» i appen).
-        </p>
-      </div>
-      <div class="po openai"><span class="pill">OpenAI · Codex</span>
-        <p>Lagre som <code>AGENTS.md</code> i <code>[navn]OS</code>.</p>
-      </div>
-      <div class="po copilot"><span class="pill">GitHub Copilot</span>
-        <p>Lagre som <code>AGENTS.md</code> eller <code>.github/copilot-instructions.md</code> i <code>[navn]OS</code>.
-        </p>
-      </div>
-      <div class="po local"><span class="pill">Lokal modell</span>
-        <p>OpenCode leser <code>AGENTS.md</code> i <code>[navn]OS</code>.</p>
-      </div>
-      <p>Test den med en gang: <em>«Hvem er jeg, og hvordan vil jeg at du skal svare?»</em> — den bør gjengi malen din.
-      </p>
-
-      <h3>4) Koble på dispatcheren (nå den fra mobilen)</h3>
-      <p>Poenget med en assistent er at den er der når du ikke sitter ved maskinen. Koble klienten til en kanal du
-        allerede bruker, og <b>verifiser at meldinger går begge veier</b>.</p>
-      <div class="po claude"><span class="pill">Claude</span>
-        <p>Slå på <b>Remote Control / Dispatch</b>: start en økt på maskinen, åpne <b>Claude-appen på mobil</b>, og
-          send en oppgave dit. Den kjører på maskinen din (ingenting flyttes til skyen). Tilgjengelig på Pro og Max
-          (beta); krever at desktop-appen er åpen og maskinen våken.</p>
-      </div>
-      <div class="po openai"><span class="pill">OpenAI · Codex</span>
-        <p>Åpne <b>Codex i ChatGPT-mobilappen</b> (iOS/Android), koble til Codex-appen på Mac-en din, og send/godkjenn
-          oppgaver fra telefonen. (Codex-appen finnes nå også til Windows.)</p>
-      </div>
-      <div class="po copilot"><span class="pill">GitHub Copilot</span>
-        <p>Start en <em>interaktiv</em> økt med <code>copilot --remote</code> i <code>[navn]OS</code>-mappa (eller slå
-          på midt i økten med <code>/remote on</code>). CLI-en viser en QR-kode og en økt-spesifikk lenke; åpne den i
-          <b>GitHub Mobile</b> eller på <b>GitHub.com</b>. Derfra ser du output i sanntid, svarer på spørsmål,
-          godkjenner/avviser permission-forespørsler og planer, og sender nye prompts — alt mens <b>økten kjører
-            videre på macen din</b> (verktøy, shell og filer blir værende lokalt).
-        </p>
-        <div class="callout warn"><span class="t">Krav: GitHub-repo</span>
-          Arbeidsmappa må være et git-repo som er hostet på GitHub.com, ellers får du «Remote session disabled: not in
-          a GitHub repository». Gjør <code>[navn]OS</code> til et (privat) GitHub-repo først:
-          <code>git init && gh repo create</code>.
-        </div>
-        <p>Kun du, innlogget med samme GitHub-konto, når økten. Maskinen må være på nett; bruk
-          <code>/keep-alive</code> så den ikke sovner. Når du gjenopptar en økt, må du legge på flagget igjen:
-          <code>copilot --resume=&lt;session-id&gt; --remote</code> eller <code>copilot --continue --remote</code>
-          (eller sett det som standard i config med <code>"remoteSessions"</code>). Remote control krever en
-          interaktiv økt — ikke <code>--prompt</code>/<code>-p</code>.
-        </p>
-      </div>
-      <div class="po local"><span class="pill">Lokal modell</span>
-        <p>En lokal modell har <em>ingen</em> ekstern dispatcher — du når den der maskinen er. Det er prisen for at
-          alt blir værende lokalt. (Vil du ha mobil-tilgang senere, er det Nivå 3.)</p>
-      </div>
-      <p><b>Verifiser:</b> send <em>«Hva ligger i tasks/active.md akkurat nå?»</em> fra mobilen og sjekk at du får
-        svaret tilbake.</p>
-
-      <h3>5) Første arbeidsflyt — to forslag</h3>
-      <p>Nå er rammeverket på plass. Her er to forslag til hva du kan bruke <code>[navn]OS</code> til. De er ikke
-        fasit — velg ett, prøv det, og bytt det ut med noe fra din egen hverdag når du har taket på flyten.</p>
-
-      <h4>Forslag 1: møte-intelligens</h4>
-      <p>Problemet: etter en dag med møter sitter du med et dusin notatbunker og null oversikt.
-        Løsningen: dump rånotater i <code>meetings/raw/</code> gjennom dagen, ikke organisert, kun ren braindump.
-        På slutten av dagen sier du:</p>
-      <pre><code>"Behandle alle møtenotater i meetings/raw fra i dag:
-
-1. Lag rene oppsummeringer i meetings/summaries
-2. Trekk ut ALLE action items til tasks/active.md
-3. Grupper etter prioritet: [HØY], [MEDIUM], [LAV]
-4. Ta med hvem som eier hva og frister
-
-Prioritering:
-- HØY: blokkerer noen andre, eller hard frist denne uka
-- MEDIUM: viktig, men fleksibel timing
-- LAV: greit å gjøre, men ingen avhengighet akkurat nå"</code></pre>
-
-
-      <h4>Forslag 2: daglig OS med <code>/morning</code> og <code>/evening</code></h4>
-      <p>To faste rutiner på 2–3 min som gir deg klarhet for hele dagen. Du lagrer dem som kommando-/prompt-filer
-        klienten kjenner igjen, og kaller dem med ett ord. Innholdet er det samme uansett leverandør — bare
-        plasseringen varierer:</p>
-      <div class="po claude"><span class="pill">Claude</span>
-        <pre><code>.claude/commands/morning.md
-.claude/commands/evening.md</code></pre>
-      </div>
-      <div class="po openai"><span class="pill">OpenAI · Codex</span>
-        <pre><code>~/.codex/prompts/morning.md
-~/.codex/prompts/evening.md</code></pre>
-        <p style="font-size:13.5px;color:var(--muted)">Merk: custom prompts er på vei ut til fordel for skills
-          (<code>~/.codex/skills/</code>) — de virker fortsatt, men nye flyter kan like gjerne lages som skills (se
-          Nivå 2).</p>
-      </div>
-      <div class="po copilot"><span class="pill">GitHub Copilot</span>
-        <pre><code>.github/prompts/morning.prompt.md
-.github/prompts/evening.prompt.md</code></pre>
-      </div>
-      <div class="po local"><span class="pill">Lokal modell</span>
-        <pre><code>.opencode/command/morning.md
-.opencode/command/evening.md</code></pre>
-      </div>
-      <h4>Innhold i <code>morning.md</code></h4>
-      <pre><code># Morgenrutine
-
-Lag dagens notat i daily-notes med filnavn YYYY-MM-DD.md.
-Still meg disse spørsmålene ett om gangen, vent på svar:
-
-1. Hvordan føler du deg i dag? (energi, humør, hva ligger på hjertet)
-2. Hva er dine tre viktigste prioriteringer i dag?
-3. Hva ville gjort dagen vellykket?
-
-Lag så notatet med dato/ukedag som tittel, energi-sjekk,
-de tre prioriteringene som avkrysningsliste, suksesskriteriet,
-og en «Notater»-seksjon for tanker gjennom dagen.</code></pre>
-
-      <h4>Innhold i <code>evening.md</code></h4>
-      <pre><code># Kveldsrefleksjon
-
-Les dagens notat fra daily-notes.
-Still meg disse ett om gangen, vent på svar:
-
-1. Hva ble gjort i dag? Hva ble ikke gjort?
-2. Hva lærte du eller la merke til om deg selv?
-3. Hva er du takknemlig for i dag?
-
-Oppdater dagens notat med en «Kveldsrefleksjon»-seksjon:
-kryss av fullførte prioriteringer, hva du lærte, takknemlighet,
-og overførte oppgaver til i morgen. Spør om de skal legges
-til i morgendagens prioriteringer.</code></pre>
-      <div class="callout tip"><span class="t">Det er DINE maler</span>
-        Rediger dem så de matcher hvordan du tenker. Tren og vær kreativ med prosjekter, noter nye vaner.
-        Etter noen dager har du notater som agenten kan analysere.</div>
-
-      <h3>Prøv å lag noe selv</h3>
-      <p><span class="pill">Din egen flyt</span> Forslagene over er bare to mønstre. Det beste caset er ett du faktisk
-        har bruk for. Velg noe lite og repeterende fra din egen hverdag, og bygg det på samme måte:</p>
-      <ol class="steps">
-        <li>Skriv én setning: <em>«Når jeg sier X, skal assistenten gjøre Y og lagre Z i [navn]OS.»</em></li>
-        <li>Bestem hvilke filer/mapper den leser fra og skriver til.</li>
-        <li>Skriv to–tre regler den alltid skal følge (språk, format, hva den aldri rører).</li>
-        <li>Kjør det manuelt et par ganger. Funker det, lagre det som en kommando-/promptfil du kan kalle med ett ord.
-        </li>
-      </ol>
-      <div class="callout tip"><span class="t">Idéer å starte fra</span>
-        Ukeslogg fra daily-notes, «hva glemte jeg denne uka?» fra tasks/active.md, en leseliste du dumper lenker i,
-        eller en enkel dagbok-/treningslogg. Hold det innenfor <code>[navn]OS</code> så lenge du lærer.</div>
-
-      <div class="callout warn"><span class="t">Sikkerhet mens du lærer</span>
-        Start alltid i en slik testmappe, ikke i hjemmemappa eller et ekte prosjekt. La godkjenning stå på for alt
-        som skriver filer eller kjører kommandoer, godkjenn ett steg om gangen til du stoler på flyten.</div>
-
     </section>
 
     <!-- ============ NIVÅ 2 ============ -->
@@ -872,466 +683,238 @@ til i morgendagens prioriteringer.</code></pre>
       <div class="level-head">
         <div class="level-badge">2</div>
         <div>
-          <h2>Få assistenten til å gjøre noe</h2>
-          <p class="sub">Mellomnivå · fra svar til handling · bygger på Nivå 1</p>
+          <h2>Skills: lær agenten teamets måte</h2>
+          <p class="sub">Finn, bruk og lag egne · hands-on på eget repo</p>
         </div>
       </div>
-      <h3>Fortsett i arbeidsområdet ditt</h3>
-      Om du ikke har et arbeidsområde fra før, bygg det nå (Nivå 1). Det er her assistenten bor, og det er her den gjør
-      ting. Lag en mappe, og åpne AI-verktøyet ditt i den.
 
-      <h3>Forslag 1: værmelding → klesvalg 🧥</h3>
-      <pre><code>"Hent værmeldingen for Oslo i dag fra yr (api.met.no) og si i
-ÉN kort setning hva jeg bør ha på meg — regnjakke? votter? solkrem?
-Ikke gjengi hele værrapporten."</code></pre>
-      <h4>Legg til ekstra kontekst (valgfritt)</h4>
-      <p><span class="pill">MCP</span> Vær alene sier lite om <em>din</em> dag. Gi assistenten kalenderen din, så
-        skifter rådet karakter: utemøte → ta med paraply, sykkelpendling → vindjakke, formelt møte → ikke shorts.
-        Det enkleste er en <b>Google Calendar MCP</b> — en liten tjeneste som lar agenten lese (ikke endre) avtalene
-        dine.</p>
-      <div class="po claude"><span class="pill">Claude</span>
-        <p>Raskest: slå på den innebygde <b>Google Calendar-connectoren</b> i Claude-appen (Settings → Connectors).
-          Vil du heller ha en åpen MCP som funker likt overalt:</p>
-        <pre><code>claude mcp add gcal -- npx -y @cocal/google-calendar-mcp
-# Første gang: kjør `npx @cocal/google-calendar-mcp auth` for å logge inn med Google</code></pre>
-      </div>
-      <div class="po openai"><span class="pill">OpenAI · Codex</span>
-        <p>I <code>~/.codex/config.toml</code>:</p>
-        <pre><code>[mcp_servers.gcal]
-command = "npx"
-args = ["-y", "@cocal/google-calendar-mcp"]
-# Første gang: kjør `npx @cocal/google-calendar-mcp auth` for å logge inn med Google</code></pre>
-      </div>
-      <div class="po copilot"><span class="pill">GitHub Copilot</span>
-        <p>I Copilot sin MCP-konfig (<code>/mcp add</code>, eller JSON-fila direkte):</p>
-        <pre><code>{ "mcpServers": { "gcal": {
-  "command": "npx",
-  "args": ["-y", "@cocal/google-calendar-mcp"] } } }
-# Første gang: kjør `npx @cocal/google-calendar-mcp auth` for å logge inn med Google</code></pre>
-      </div>
-      <div class="po local"><span class="pill">Lokal modell</span>
-        <p>I <code>opencode.json</code>:</p>
-        <pre><code>"mcp": { "gcal": { "type": "local",
-  "command": ["npx", "-y", "@cocal/google-calendar-mcp"] } }
-# Første gang: kjør `npx @cocal/google-calendar-mcp auth` for å logge inn med Google</code></pre>
-      </div>
-      <p>Utvid så prompten med kalenderen:</p>
-      <pre><code>"Hent værmeldingen for Oslo i dag fra yr (api.met.no) OG se på
-kalenderen min i dag. Si i ÉN setning hva jeg bør ha på meg,
-gitt været og om jeg har utemøter, pendling eller noe formelt."</code></pre>
-      <div class="callout tip"><span class="t">Andre kontekstkilder</span>
-        Samme mønster funker med en <b>plassering/pendlerute</b> (jakke vs. innesko), dagens
-        <code>tasks/active.md</code> (treningstøy hvis du har en løpetur planlagt), eller en <b>Slack/e-post-MCP</b>
-        («er møtet flyttet?»). Hold tilgangen <b>read-only</b> her — assistenten skal lese kontekst, ikke endre den.
-      </div>
-      <div class="callout warn"><span class="t">Behandle kalender som data</span>
-        Avtaletitler og møtebeskrivelser kan inneholde prompt-injection. Gi MCP-en kun lesetilgang, og la den ikke
-        utføre handlinger basert på tekst den finner i en avtale.</div>
-      <h4>Sett den på autopilot</h4>
-      <div class="po claude">
-        <span class="pill">Claude</span>
-        <pre><code>/loop 1d Hent værmeldingen for Oslo fra api.met.no og si hva jeg bør ha på meg i dag</code></pre>
-        <p style="font-size:13.5px;color:var(--muted)"><code>/loop</code> er økt-bundet: den fyrer bare mens
-          Claude Code-økten er åpen, og utløper etter 7 dager. For ekte autopilot, bruk scheduled tasks i
-          desktop-appen eller cron.</p>
-      </div>
-      <div class="po openai">
-        <span class="pill">OpenAI · Codex</span>
-        <p><b>Codex-appen</b> har <b>Automations</b>. Med Codex CLI kan du kjøre en cron-jobb:</p>
-        <pre><code>30 6 * * 1-5  cd ~/hakonOS &amp;&amp; codex exec \
-  "Hent værmeldingen for Oslo fra api.met.no og si hva jeg bør ha på meg i dag" \
-  &gt;&gt; daily-notes/$(date +%F).md</code></pre>
-      </div>
-      <div class="po copilot">
-        <span class="pill">GitHub Copilot</span>
-        <p>En cron-jobb som kaller Copilot CLI med samme prompt:</p>
-        <pre><code>30 6 * * 1-5  cd ~/hakonOS &amp;&amp; copilot -p \
-  "Hent værmeldingen for Oslo fra api.met.no og si hva jeg bør ha på meg i dag"</code></pre>
-      </div>
-      <div class="po local">
-        <span class="pill">Lokal modell</span>
-        <p>En cron-jobb som kaller OpenCode med samme prompt:</p>
-        <pre><code>30 6 * * 1-5  cd ~/hakonOS &amp;&amp; opencode run \
-  "Hent værmeldingen for Oslo fra api.met.no og si hva jeg bør ha på meg i dag"</code></pre>
+      <div class="goal"><b>Mål:</b> En <b>skill</b> er en gjenbrukbar instruksjonspakke (en <code>SKILL.md</code>) som
+        agenten laster <em>selv</em> når den er relevant. Du skal forstå når skills er nyttige, finne ferdige, og bygge
+        én egen: en «følg-vår-kodestil»-skill utledet fra din egen kodebase.</div>
+
+      <h3>Hva en skill egentlig er, og hvorfor</h3>
+      <p>Tenk på en skill som <em>nedskrevet ekspertise</em> du gir agenten én gang, og som den selv henter fram når den
+        trenger den. Du har sikkert allerede kjent på at du gjentar de samme instruksjonene i hver økt («husk å kjøre
+        testene», «vi bruker denne mappestrukturen», «skriv commit-meldinger sånn»). En skill fjerner den gjentakelsen.</p>
+      <p>Tre lag det er lett å blande sammen:</p>
+      <table>
+        <tr>
+          <th>Verktøy</th>
+          <th>Når</th>
+          <th>Lastes</th>
+        </tr>
+        <tr>
+          <td><code>CLAUDE.md</code></td>
+          <td>Alltid-sann kontekst om prosjektet (stack, kommandoer, regler)</td>
+          <td>Alltid (ligger i konteksten hele tiden)</td>
+        </tr>
+        <tr>
+          <td><b>Skill</b></td>
+          <td>En ferdighet/arbeidsflyt agenten <em>noen ganger</em> trenger</td>
+          <td>On-demand (agenten leser <code>description</code> og laster resten når det matcher)</td>
+        </tr>
+        <tr>
+          <td>Slash-kommando</td>
+          <td>Noe <em>du</em> vil trigge eksplisitt med ett ord</td>
+          <td>Når du skriver <code>/navnet</code></td>
+        </tr>
+      </table>
+      <p>Fordelen med skill-formen: den koster ikke kontekst før den faktisk brukes, den deles via git, og den er en
+        <b>åpen standard</b>: samme <code>SKILL.md</code> funker i Claude Code, Codex og Copilot.</p>
+
+      <h3>Hvor skills bor</h3>
+      <p>En skill er en mappe med en <code>SKILL.md</code>: frontmatter (<code>name</code> + <code>description</code>)
+        og instruksjoner under. Claude Code leser dem fra:</p>
+      <pre><code>.claude/skills/&lt;navn&gt;/SKILL.md      # i prosjektet (deles via git)
+~/.claude/skills/&lt;navn&gt;/SKILL.md     # personlig, på tvers av prosjekter</code></pre>
+      <p>Agenten leser bare <code>description</code> til å begynne med, og laster resten når oppgaven matcher. Derfor er
+        en skarp <code>description</code> det viktigste du skriver.</p>
+
+      <h3>Skills som kan være fine i utviklerhverdagen</h3>
+      <p>Et knippe mønstre som lønner seg fordi de er repeterende og lette å beskrive presist:</p>
+      <table>
+        <tr>
+          <th>Skill</th>
+          <th>Hva den gjør</th>
+        </tr>
+        <tr>
+          <td><b>Følg-vår-kodestil</b></td>
+          <td>Holder ny kode i teamets faktiske konvensjoner (den vi bygger nedenfor).</td>
+        </tr>
+        <tr>
+          <td><b>PR-beskrivelse</b></td>
+          <td>Skriver PR-tekst i malen deres ut fra diffen: hva, hvorfor, hvordan teste.</td>
+        </tr>
+        <tr>
+          <td><b>Commit-melding</b></td>
+          <td>Genererer commit-meldinger i teamets stil (f.eks. Conventional Commits).</td>
+        </tr>
+        <tr>
+          <td><b>Skriv test</b></td>
+          <td>Lager tester med deres rammeverk, navngiving og mappestruktur.</td>
+        </tr>
+        <tr>
+          <td><b>Code review</b></td>
+          <td>Går gjennom en diff og flagger det teamet bryr seg om før menneske-review.</td>
+        </tr>
+        <tr>
+          <td><b>Onboard / forklar modul</b></td>
+          <td>Forklarer en del av kodebasen for nye utviklere, der dokumentasjonen alltid henger etter.</td>
+        </tr>
+        <tr>
+          <td><b>grill-me</b></td>
+          <td>Stress-tester en plan eller et design med nådeløse spørsmål før du koder. Vi bruker den straks.</td>
+        </tr>
+      </table>
+      <div class="callout tip"><span class="t">Tommelfingerregel</span>
+        Merker du at du forklarer det samme to ganger, eller at agenten gjør samme feil gang på gang, er det
+        sannsynligvis en skill der. Hold den liten og spesifikk; én skill = én ferdighet.
       </div>
 
-      <h3>Forslag 2: kjøleskap → middag → handleliste 🍳</h3>
-      <p><span class="pill">Filer + skill</span> Her jobber assistenten i ditt lille OS: den leser hva du har,
-        foreslår middag og skriver manglende varer til handlelisten.</p>
-      <pre><code>"Her er kjøleskapet mitt (kjoleskap.md). Foreslå middag i kveld
-som bruker mest mulig av det som snart går ut på dato.
-Mangler vi noe? Legg det i handleliste.md for Oda."</code></pre>
-      <h4>Hva den trenger tilgang til</h4>
-      <ul>
-        <li>En oversikt over hva du har &mdash; en <code>kjoleskap.md</code> du oppdaterer, eller et bilde via
-          vision.</li>
-        <li>Skrivetilgang til <code>handleliste.md</code></li>
-      </ul>
-      <h4>Pakk den som en skill</h4>
-      <p>Agent Skills er en <b>åpen standard</b>: nøyaktig samme <code>SKILL.md</code> virker for Claude, Codex,
-        Copilot og OpenCode — bare mappa varierer. Agenten leser <code>description</code> og laster skillen selv når
-        den er relevant.</p>
-      <pre><code>---
-name: middagsplan
-description: Bruk når brukeren ber om middag fra kjøleskapet eller handleliste.
+      <h3>1) Finn og installer skills</h3>
+      <p><span class="pill">skills.sh</span> <a href="https://skills.sh">skills.sh</a> er en markedsplass for skills.
+        Installer med ett kall (åpen standard: samme <code>SKILL.md</code> funker for Claude, Codex og Copilot):</p>
+      <pre><code>npx skills add &lt;repo-url&gt; --skill &lt;skill-navn&gt;</code></pre>
+      <p>Til oppgaven under henter vi to hjelpere:</p>
+      <pre><code>npx skills add https://github.com/github/awesome-copilot --skill write-coding-standards-from-file
+npx skills add https://github.com/mattpocock/skills --skill grill-me</code></pre>
+
+      <h3>2) Bygg «følg-vår-kodestil»-skillen fra ditt eget repo</h3>
+      <p>I stedet for å skrive konvensjoner fra hukommelsen lar du agenten <em>utlede</em> dem fra koden som
+        faktisk finnes. Deretter stress-tester du resultatet.</p>
+      <ol class="steps">
+        <li><b>Utled standarden.</b> Pek <code>write-coding-standards-from-file</code> mot et representativt utvalg av
+          repoet:
+          <pre><code>"Bruk write-coding-standards-from-file på src/ og trekk ut våre
+faktiske konvensjoner: indentering, navngiving, import-rekkefølge,
+kommentarstil, mønstre for feilhåndtering og tester."</code></pre>
+        </li>
+        <li><b>Grill utkastet.</b> Kjør en <code>/grilling</code> (fra grill-me) mot det:
+          <em>«Er hver regel faktisk sann i repoet? Hvor er det uenighet i koden? Hva mangler?»</em>
+          Et utkast som ikke tåler grilling, hører ikke hjemme i skillen.</li>
+        <li><b>Lagre som skill.</b> Be agenten skrive resultatet til
+          <code>.claude/skills/var-kodestil/SKILL.md</code> med en presis <code>description</code>, f.eks.:
+          <pre><code>---
+name: var-kodestil
+description: Bruk når du skriver eller endrer kode i dette repoet,
+  så den følger teamets faktiske konvensjoner.
 ---
-Les kjoleskap.md og handleliste.md.
-Foreslå én middag som bruker varer som snart går ut.
-Skriv manglende varer til handleliste.md.
-Ikke foreslå mer enn 30 min aktiv matlaging på hverdager.</code></pre>
-      <p>Hvor fila skal ligge:</p>
-      <div class="po claude"><span class="pill">Claude</span>
-        <pre><code>.claude/skills/middagsplan/SKILL.md</code></pre>
-      </div>
-      <div class="po openai"><span class="pill">OpenAI · Codex</span>
-        <p>Codex støtter samme Agent Skills-standard. Personlig på tvers av prosjekter, eller per prosjekt:</p>
-        <pre><code>~/.codex/skills/middagsplan/SKILL.md
-# eller i prosjektet: .codex/skills/middagsplan/SKILL.md</code></pre>
-      </div>
-      <div class="po copilot"><span class="pill">GitHub Copilot</span>
-        <p>Copilot støtter samme Agent Skills-standard. Prosjekt-skill i repoet, eller personlig på tvers av prosjekter:
-        </p>
-        <pre><code>.github/skills/middagsplan/SKILL.md
-# eller personlig: ~/.copilot/skills/middagsplan/SKILL.md</code></pre>
-      </div>
-      <div class="po local"><span class="pill">Lokal modell</span>
-        <p>OpenCode leser samme <code>SKILL.md</code> on-demand via <code>skill</code>-verktøyet:</p>
-        <pre><code>.opencode/skills/middagsplan/SKILL.md</code></pre>
-      </div>
-
-      <h3>Forslag 3: bestill ukeshandelen fra Oda 🛒</h3>
-      <p><span class="pill">Browser + godkjenning</span> Oda har ingen åpen MCP, så assistenten styrer
-        Chrome i stedet. Dette er casen som viser at agenten kan gjøre en ekte oppgave i et ekte webverktøy.
-        Dette er det første caset som trenger en nettleser, så vi kobler den opp her.</p>
-      <h4>Først: koble Chrome til assistenten</h4>
-      <p>Oda-casen bruker <b>Playwright MCP</b>. Det gir agenten en egen nettleser den kan åpne, klikke i
-        og lese fra, uten at du deler din personlige nettleserdata.</p>
-      <ol class="steps">
-        <li>Lag en egen browserprofil for workshopen, f.eks. <code>/Users/DITT_NAVN/ai-chrome-profile</code>
-          på Macen. Ikke bruk primærprofilen din.</li>
-        <li>Koble Playwright MCP til agenten din:</li>
+(reglene utledet over)</code></pre>
+        </li>
+        <li><b>Test at den lastes.</b> Start en ny oppgave: <em>«Skriv en liten ny hjelpefunksjon for X.»</em> Sjekk at
+          agenten følger stilen, og at den nevner at den brukte <code>var-kodestil</code>.</li>
       </ol>
-      <div class="po claude">
-        <span class="pill">Claude</span>
-        <pre><code>claude mcp add playwright -- npx -y @playwright/mcp@latest \
-  --browser chrome \
-  --user-data-dir /Users/DITT_NAVN/ai-chrome-profile</code></pre>
-      </div>
-      <div class="po openai">
-        <span class="pill">OpenAI · Codex</span>
-        <p>I <code>~/.codex/config.toml</code>:</p>
-        <pre><code>[mcp_servers.playwright]
-command = "npx"
-args = ["-y", "@playwright/mcp@latest", "--browser", "chrome",
-        "--user-data-dir", "/Users/DITT_NAVN/ai-chrome-profile"]</code></pre>
-      </div>
-      <div class="po copilot">
-        <span class="pill">GitHub Copilot</span>
-        <p>I Copilot sin MCP-konfig (<code>copilot</code> → <code>/mcp add</code>, eller JSON-fila direkte):</p>
-        <pre><code>{ "mcpServers": { "playwright": {
-  "command": "npx",
-  "args": ["-y", "@playwright/mcp@latest", "--browser", "chrome",
-           "--user-data-dir", "/Users/DITT_NAVN/ai-chrome-profile"] } } }</code></pre>
-      </div>
-      <div class="po local">
-        <span class="pill">Lokal modell</span>
-        <p>I <code>opencode.json</code>:</p>
-        <pre><code>"mcp": { "playwright": { "type": "local",
-  "command": ["npx", "-y", "@playwright/mcp@latest", "--browser", "chrome",
-              "--user-data-dir", "/Users/DITT_NAVN/ai-chrome-profile"] } }</code></pre>
-      </div>
-      <ol class="steps" start="3">
-        <li>Start agenten på nytt og spør: <em>«Åpne oda.no i Chrome.»</em></li>
-        <li>Logg inn på Oda manuelt i Chrome-vinduet agenten åpner. Ikke gi passordet til agenten.</li>
-        <li>Test med noe ufarlig: <em>«Søk opp melk på oda.no og les opp de tre øverste treffene.»</em></li>
-      </ol>
-      <div class="callout warn"><span class="t">Browser-regel</span>
-        Assistenten kan klikke feil. Hold godkjenning på for alt som kjøper, sender, sletter eller endrer data.
-        Ved betaling stopper agenten; du betaler selv.</div>
-      <h4>Happy path</h4>
-      <ol class="steps">
-        <li>Du holder en <code>handleliste.md</code> oppdatert (eller lar middags-casen over fylle den).</li>
-        <li>Du sier: <em>«Legg alt i handleliste.md i Oda-handlekurven min.»</em></li>
-        <li>Assistenten åpner oda.no, søker opp hver vare og velger riktig mengde og merke.</li>
-        <li>Den <b>stopper ved betaling</b> og viser deg kurven. Du bekrefter og betaler selv.</li>
-      </ol>
-      <h4>Hva den trenger tilgang til</h4>
-      <ul>
-        <li>Playwright MCP koblet opp (se «Først: koble Chrome til assistenten» over).</li>
-        <li>At <b>du</b> er innlogget på Oda &mdash; assistenten lagrer aldri passordet ditt.</li>
-        <li><code>handleliste.md</code> å lese fra.</li>
-        <li>En <b>godkjenningsport før betaling</b>, alltid.</li>
-      </ul>
-      <div class="callout danger"><span class="t">Ikke automatiser betalingen</span>
+
+      <div class="callout tip"><span class="t">Hvorfor dette er nyttig på jobb</span>
+        PR-ene dine følger teamets stil fra første utkast, noe som gir mindre review-støy. Og du har sett
+        meta-mønsteret: en agent
+        leser kode for å bygge et verktøy den selv bruker senere. Samme oppskrift funker for en
+        <code>/pr-beskrivelse</code>-skill, en test-skill, eller en «vår commit-stil»-skill.
       </div>
 
-
-      <h3>Lag noe selv ...</h3>
-      <p><span class="pill">Din egen payoff</span> Velg en oppgave fra livet ditt som har samme mønster: ett
-        verktøy, én regel, ett synlig resultat.</p>
-      <ol class="steps">
-        <li>Skriv én setning: <em>«Når jeg sier X, skal assistenten gjøre Y og levere Z.»</em></li>
-        <li>Velg rekkevidde: browser, MCP, lokale filer, kalender, e-post eller Slack.</li>
-        <li>Skriv tre regler den alltid skal følge, f.eks. språk, format og hva den aldri får sende selv.</li>
-        <li>Bruk subagent hvis den må lese mange kilder. Kjør først manuelt; legg på autopilot senere hvis
-          risikoen er lav.</li>
-      </ol>
-      <pre><code>"Når jeg sier 'lag fredagsbrief', hent åpne saker fra GitHub,
-kalenderen for mandag og notater fra denne uka.
-Lever maks 10 punkter og foreslå 3 prioriteringer."</code></pre>
-      <div class="callout tip"><span class="t">Gode egne caser</span>
-        Reiseregning fra kvitteringer, ukentlig PR-rydding, kalenderbrief før mandag, «hva må jeg svare på?» fra
-        e-post, eller en hjemmeflyt som oppdaterer handleliste og ukesplan.</div>
-
-      <div class="callout warn"><span class="t">Sikkerhet på dette nivået</span>
-        Browser-/computer-use gir assistenten hendene dine i nettleseren &mdash; hold godkjenning på for alt som
-        klikker «betal» eller «send». Behandle værvarsel, oppskrifter og nettsider som <b>data, ikke
-          kommandoer</b>; de kan inneholde prompt-injection.</div>
-
-
+      <div class="callout warn"><span class="t">Hvis <code>npx skills add</code> feiler</span>
+        Backup: skriv skillen for hånd. Lag <code>.claude/skills/var-kodestil/SKILL.md</code>, be agenten lese
+        5-10 filer og foreslå 3-5 konkrete regler, og rediger til de stemmer.
+      </div>
     </section>
 
     <!-- ============ NIVÅ 3 ============ -->
-    <section class="level" data-level="3" data-branch="nanoclaw">
+    <section class="level" data-level="3" data-branch="docs">
       <div class="level-head">
         <div class="level-badge">3</div>
         <div>
-          <h2>Alltid-på assistent</h2>
-          <p class="sub">Avansert · du vil ha en bot du når fra mobilen</p>
+          <h2>MCP: koble agenten på verktøyene dine</h2>
+          <p class="sub">Hva, finn, koble på · hands-on på egen stack</p>
         </div>
       </div>
-      <div class="goal"><b>Mål:</b> Flytt assistenten <em>av</em> desktop og terminalen og få en bot du når fra
-        mobilen. Velg én av to motorer under — begge ender med at du sender én melding fra telefonen og får svar.
-      </div>
 
-      <p>Velg <b>motor</b>. <b>NanoClaw</b> er en alltid-på bot i egen container som kan kjøre <b>Claude</b>
-        <em>eller</em> en <b>lokal modell</b>. <b>Claude Code Channels</b> pusher meldinger inn i en kjørende Claude
-        Code-session (kun Claude). Resten av nivået tilpasser seg valget ditt.
-      </p>
+      <div class="goal"><b>Mål:</b> <b>MCP (Model Context Protocol)</b> er en åpen standard for å koble agenten til
+        eksterne verktøy og datakilder via en liten «server» (browser, design, issue-tracker, dokumentasjon).
+        Du skal koble på <em>én</em> server som passer din stack, og bruke den i en oppgave.</div>
+
+      <h3>Hvordan koble på</h3>
+      <p>Mønsteret er alltid det samme:</p>
+      <pre><code>claude mcp add &lt;navn&gt; -- &lt;kommando som starter serveren&gt;
+# eller for en remote server:
+claude mcp add --transport sse &lt;navn&gt; &lt;url&gt;
+
+claude mcp list        # se hva som er koblet på
+/mcp                   # inne i Claude Code: status + verktøy serveren tilbyr</code></pre>
+      <p>Å <em>finne</em> servere er stort sett googling + offisielle registries (f.eks.
+        <a href="https://github.com/modelcontextprotocol/servers">modelcontextprotocol/servers</a>). De fleste verktøy
+        du bruker på jobb har en MCP i dag.</p>
+
+      <h3>Velg den som passer din stack</h3>
+      <p>Velg <b>én</b> og følg oppskriften. Sitter du fast på auth, hopp til <b>Docs-lookup</b> (ingen innlogging).</p>
 
       <div class="seg branches branch-pick" id="branchSeg">
-        <button data-b="nanoclaw" class="active">NanoClaw</button>
-        <button data-b="channels">Claude Code Channels</button>
+        <button data-b="docs" class="active">📚 Docs-lookup</button>
+        <button data-b="playwright">🌐 Playwright</button>
+        <button data-b="figma">🎨 Figma</button>
+        <button data-b="jira">📋 Jira / Atlassian</button>
       </div>
 
-      <table>
-        <tr>
-          <th>Motor</th>
-          <th>Bruk når</th>
-          <th>Modell</th>
-          <th>Alltid-på</th>
-        </tr>
-        <tr>
-          <td><b>NanoClaw</b></td>
-          <td>du vil ha en isolert bot som kjører hele tiden</td>
-          <td>Claude <em>eller</em> lokal modell</td>
-          <td>Kjører som tjeneste i egen container</td>
-        </tr>
-        <tr>
-          <td><b>Claude Code Channels</b></td>
-          <td>du allerede bruker Claude Code og vil nå samme session fra chat</td>
-          <td>Kun Claude</td>
-          <td>Bare mens sessionen er åpen (tmux/bakgrunn)</td>
-        </tr>
-      </table>
+      <!-- DOCS (null-auth, default) -->
+      <div class="br docs">
+        <span class="pill">Docs-lookup · ingen auth</span>
+        <p>Gir agenten oppdatert dokumentasjon for bibliotekene repoet ditt bruker. Slutt på utdaterte API-er.
+          Krever ingen innlogging, så dette er det trygge valget.</p>
+        <pre><code>claude mcp add context7 -- npx -y @upstash/context7-mcp</code></pre>
+        <p>Start Claude på nytt, og prøv mot et bibliotek du faktisk bruker:</p>
+        <pre><code>"Slå opp i Context7 hvordan &lt;bibliotek du bruker&gt; gjør &lt;ting&gt;
+i nyeste versjon, og oppdater koden vår i tråd med det. Vis diff."</code></pre>
+      </div>
 
-      <!-- ===== STEG 1 ===== -->
-      <h3>Steg 1: Få én bot til å svare <span style="color:var(--muted);font-weight:400">· 10 min, én agent, én
-          kanal</span></h3>
+      <!-- PLAYWRIGHT -->
+      <div class="br playwright">
+        <span class="pill">Playwright · har du en webapp lokalt</span>
+        <p>Gir agenten en egen nettleser den kan åpne, klikke i og lese fra. Fint for å verifisere UI eller reprodusere
+          en feil.</p>
+        <pre><code>claude mcp add playwright -- npx -y @playwright/mcp@latest</code></pre>
+        <p>Start webappen din lokalt, start Claude på nytt og prøv:</p>
+        <pre><code>"Åpne http://localhost:3000, naviger til &lt;en side i appen&gt;,
+og fortell meg om noe ser ødelagt ut eller logger feil i konsollen."</code></pre>
+        <div class="callout warn"><span class="t">Browser-regel</span>
+          Agenten kan klikke feil. Hold godkjenning på for alt som sender, lagrer eller sletter data. Ikke pek den mot
+          produksjon.</div>
+      </div>
 
-      <div class="br nanoclaw">
-        <p>NanoClaw installeres ikke som npm-pakke — du kloner repoet og kjører oppsett-skriptet. Ingen config-fil,
-          ingen dashboard; alt styres fra chat (Claude Code) og admin-CLI-en <code>ncl</code>.</p>
-        <pre><code># Krever Node 20+, pnpm 10+ og Docker. Skriptet installerer det som mangler.
-git clone https://github.com/nanocoai/nanoclaw.git nanoclaw-v2
-cd nanoclaw-v2
-bash nanoclaw.sh</code></pre>
-        <p><code>nanoclaw.sh</code> registrerer modell-nøkkelen din i OneCLI, bygger agent-containeren og parer din
-          første kanal. Når et steg krever skjønn, tar Claude Code over.</p>
+      <!-- FIGMA -->
+      <div class="br figma">
+        <span class="pill">Figma · frontend / design-jobb</span>
+        <p>Lar agenten lese et Figma-design og generere markup/komponenter mot det. Bruker Figmas innebygde
+          <b>Dev Mode MCP-server</b>.</p>
         <ol class="steps">
-          <li><b>Kanal:</b> kjør <code>/add-telegram</code> i Claude Code og lim inn bot-token fra
-            <code>@BotFather</code> (Telegram er raskest og virker overalt). Andre: <code>/add-discord</code>,
-            <code>/add-whatsapp</code>, <code>/add-slack</code>.
+          <li>I <b>Figma desktop</b>: slå på <em>Preferences → Enable Dev Mode MCP Server</em> (krever Dev/Full-sete).
+            Serveren kjører lokalt på <code>http://127.0.0.1:3845</code>.</li>
+          <li>Koble Claude Code på:
+            <pre><code>claude mcp add --transport sse figma http://127.0.0.1:3845/sse</code></pre>
           </li>
-          <li><b>Første agent:</b> <code>/init-first-agent</code> wirer en DM-agent og gir den en
-            <code>CLAUDE.md</code> per agent-gruppe. <em>(Gjorde du Nivå 1–2? Lim system-prompten din inn der.)</em>
+          <li>Marker en frame i Figma, start Claude på nytt og prøv:
+            <pre><code>"Hent det markerte Figma-designet og lag en komponent i vår stil
+som matcher det. Følg var-kodestil-skillen fra Nivå 2."</code></pre>
           </li>
-          <li>Send en melding fra telefonen (default trigger <code>@Andy</code>). Du har nå en bot som svarer.
-            Restart en gruppe med <code>ncl groups restart --id &lt;group-id&gt;</code>.</li>
         </ol>
-        <div class="callout tip"><span class="t">Første payoff</span>
-          Boten kjører som tjeneste i egen container og svarer selv om terminalen er lukket. Hvilken modell den bruker
-          velger du i Steg 2.
-        </div>
       </div>
 
-      <div class="br channels">
-        <p>Krav: Claude Code <code>v2.1.80</code> eller nyere og innlogging via <code>claude.ai</code>-konto —
-          Console-/API-nøkkel-auth støttes <em>ikke</em>. <code>bun --version</code> må fungere, og på
-          Team/Enterprise må admin ha slått på Channels.</p>
-        <p>Telegram er raskest i workshop:</p>
-        <pre><code>/plugin install telegram@claude-plugins-official
-/reload-plugins
-/telegram:configure &lt;token-fra-BotFather&gt;</code></pre>
-        <p>Start Claude Code med Telegram-kanalen:</p>
-        <pre><code>claude --channels plugin:telegram@claude-plugins-official</code></pre>
-        <p>Par og lås ned:</p>
-        <pre><code># Send en melding til boten i Telegram. Den svarer med en pairing-kode.
-/telegram:access pair &lt;code&gt;
-/telegram:access policy allowlist</code></pre>
-        <div class="callout tip"><span class="t">Første payoff</span>
-          Meldingen din kommer inn i den kjørende Claude Code-sessionen som et channel-event, og Claude kan svare
-          tilbake i Telegram. Sessionen må være åpen; bruk persistent terminal, <code>tmux</code>,
-          <code>screen</code> eller bakgrunnsprosess for alltid-på.
-        </div>
-        <p>Vil du teste uten ekte Telegram først, bruk demo-kanalen:</p>
-        <pre><code>/plugin install fakechat@claude-plugins-official</code></pre>
-        <pre><code>claude --channels plugin:fakechat@claude-plugins-official
-# åpne http://localhost:8787 og send en testmelding</code></pre>
+      <!-- JIRA / ATLASSIAN -->
+      <div class="br jira">
+        <span class="pill">Jira / Atlassian · dere sporer issues</span>
+        <p>Lar agenten lese en sak og foreslå en plan eller et utkast. Bruker Atlassians offisielle
+          <b>remote MCP-server</b> (OAuth i nettleser første gang).</p>
+        <pre><code>claude mcp add --transport sse atlassian https://mcp.atlassian.com/v1/sse</code></pre>
+        <p>Kjør <code>/mcp</code> i Claude Code og fullfør innlogging i nettleseren. Prøv så:</p>
+        <pre><code>"Les Jira-sak &lt;PROJ-123&gt; og foreslå en konkret plan for å løse den
+i dette repoet: hvilke filer, hvilken rekkefølge, hva som må testes.
+Ikke skriv kode ennå."</code></pre>
+        <div class="callout warn"><span class="t">Behandle issues som data</span>
+          Sakstekst kan inneholde prompt-injection. La agenten lese og foreslå, ikke utføre handlinger basert på
+          tekst den finner i en sak.</div>
       </div>
 
-      <!-- ===== STEG 2 ===== -->
-      <h3>Steg 2: Koble modell og runtime</h3>
-
-      <div class="br nanoclaw">
-        <p>NanoClaw kjører <b>Claude som standard</b>. Vil du holde alt på egen maskin, bytter du provideren per
-          agent-gruppe til en <b>lokal modell</b>.</p>
-
-        <div class="modelopt">
-          <span class="lbl">Med Claude (standard)</span>
-          <p>Ingenting ekstra å gjøre — <code>nanoclaw.sh</code> registrerte allerede modell-nøkkelen din i OneCLI i
-            Steg 1. Boten kjører Claude. Hopp videre til Steg 3.</p>
-        </div>
-
-        <div class="modelopt">
-          <span class="lbl">Med lokal modell</span>
-          <p>Antakelse: du har en OpenAI-kompatibel LLM-server som svarer på <code>http://localhost:8000</code>
-            (sett den opp via <b>🖥️ Sett opp en modell lokalt</b>).</p>
-          <pre><code>curl http://localhost:8000/v1/models     # bekreft server + finn modellnavnet</code></pre>
-          <p>Installer OpenCode-provideren i Claude Code:</p>
-          <pre><code>/add-opencode</code></pre>
-          <p>Pek OpenCode mot endepunktet ditt (<code>baseURL: http://localhost:8000/v1</code>, <code>model</code> =
-            det <code>/v1/models</code> returnerer). Provider settes per agent-gruppe —
-            <code>ncl groups config update --id &lt;group-id&gt; ...</code>, eller bare be agenten gjøre det
-            (admin-godkjenning kreves).
-          </p>
-          <p class="provider-note">💡 Native localhost-OpenAI-compat er fortsatt under arbeid i NanoClaw
-            (<a href="https://github.com/nanocoai/nanoclaw/issues/1984">issue #1984</a>); OpenCode med egendefinert
-            <code>baseURL</code> er den fungerende ruten i dag. Bytt modell ved å oppdatere gruppe-configen og kjøre
-            <code>ncl groups restart --id &lt;group-id&gt;</code>.
-          </p>
-        </div>
-      </div>
-
-      <div class="br channels">
-        <p>Ingen <code>nanoclaw.json</code> og ingen egen modellblokk. Kanalen pusher meldinger inn i den Claude
-          Code-sessionen du startet med <code>--channels</code>, så modellen er den du allerede er logget inn med.
-          Gjenbruk Nivå 1/2-instruksjonene dine i repoet: <code>CLAUDE.md</code>, skills, subagents og MCP ligger der
-          Claude Code allerede leser dem.</p>
-      </div>
-
-      <!-- ===== STEG 3 ===== -->
-      <h3>Steg 3: Lås boten FØR du gir den tilgang</h3>
-      <p>Test gjerne en prompt-injection-streng i en uskyldig kanal.</p>
-
-      <div class="br nanoclaw">
-        <div class="callout danger"><span class="t">Sikkerhet i NanoClaw</span>
-          <ul style="margin:8px 0 0">
-            <li>Kun parede/godkjente avsendere slipper inn (<code>unknown_sender_policy</code>); styr tilgang med
-              <code>ncl roles</code> / <code>ncl members</code>, og se avviste meldinger med
-              <code>ncl dropped-messages list</code>.
-            </li>
-            <li>Krev mention i grupper via wiring-reglene (<code>/manage-channels</code>).</li>
-            <li>Krev godkjenning for handlinger som bruker legitimasjon: OneCLI håndterer hemmeligheter og
-              godkjenningspolicy (web-UI på <code>http://127.0.0.1:10254</code>), og NanoClaw ruter godkjenningen til
-              en admin. Self-mod (installere pakker / koble MCP) krever admin-godkjenning.</li>
-            <li>Hemmeligheter ligger i OneCLI-vaulten, aldri i env eller chat. <code>.env</code> brukes bare til
-              bootstrap, men ikke commit dette.</li>
-            <li>Hver agent-gruppe kjører isolert i egen Docker-container og ser bare det du mounter.</li>
-          </ul>
-        </div>
-      </div>
-
-      <div class="br channels">
-        <div class="callout danger"><span class="t">Autovern før fart — Claude Code Channels</span>
-          <ul style="margin:8px 0 0">
-            <li>Bruk pairing + <code>access policy allowlist</code>. Alle som kan svare gjennom en kanal med permission
-              relay kan også godkjenne eller avvise verktøybruk — allowlist derfor kun folk du stoler på.</li>
-            <li>Boten kjører i din lokale Claude Code-session; permission prompts kan stoppe jobben til du svarer.</li>
-            <li>API-nøkler/tokens i <code>.env</code> eller passordhåndterer, aldri i kode eller git.</li>
-          </ul>
-        </div>
-      </div>
-
-      <!-- ===== STEG 4 ===== -->
-      <h3>Steg 4: Gi den ekte capabilities + planlagte oppgaver</h3>
-      <p>Koble på verktøy (MCP) så den faktisk <em>gjør</em> noe, og flytt Nivå 2-briefen din inn som en
-        recurring jobb.</p>
-      <table>
-        <tr>
-          <th>Idé</th>
-          <th>Verktøy-miks (MCP)</th>
-        </tr>
-        <tr>
-          <td>Daglig brief kl. 07:00 (kalender + e-post + nyheter)</td>
-          <td><code>google-calendar</code> + <code>gmail</code> + <code>rss</code></td>
-        </tr>
-        <tr>
-          <td>Utviklerassistent i chatten</td>
-          <td><code>github</code> + terminal (med godkjenning)</td>
-        </tr>
-        <tr>
-          <td>Møtereferat-maskin</td>
-          <td><code>zoom</code> + <code>whisper</code> + <code>notion</code></td>
-        </tr>
-      </table>
-
-      <div class="br nanoclaw">
-        <p>Koble på verktøy via MCP: <code>ncl groups config add-mcp-server ...</code> (eller be agenten, med
-          admin-godkjenning). Planlagte oppgaver lager du ved å be boten i naturlig språk — «@Andy hver hverdag 07:00,
-          send meg en brief» — så kjører den Claude på timeplan og melder deg tilbake.</p>
-      </div>
-
-      <div class="br channels">
-        <p>Claude Channels er event-drevet: chat, CI, webhooks og varsler kan pushe inn i sessionen. MCP-servere og
-          skills ligger der Claude Code allerede leser dem (<code>.mcp.json</code>, <code>CLAUDE.md</code>). For
-          timer-baserte jobber bruker du Claude Code scheduled tasks.</p>
-      </div>
-
-      <!-- ===== STEG 5 ===== -->
-      <h3>Steg 5: Skaler til flere assistenter 🎯</h3>
-      <p>Én assistent som skal kunne alt blir middelmådig på alt. Del den i spesialister — én for jobb, én for kode,
-        én for hjem — hver med egen systemprompt og egne verktøy. Ferdige system-prompter ligger i mappen
-        <code>nivaa-3/agents/</code>.
-      </p>
-
-      <div class="br nanoclaw">
-        <div class="callout warn"><span class="t">NanoClaw bruker agent-grupper</span>
-          Hver spesialist er sin egen agent-gruppe med egen <code>CLAUDE.md</code>, eget minne og egen container. Du
-          ruter ved å wire ulike kanaler/chatter til ulike grupper — ikke ved å bytte ut en config-blokk.
-        </div>
-        <pre><code>ncl groups create --name jobb      # kalender + e-post
-ncl groups create --name dev       # github + CI/logg
-ncl groups create --name hjemme    # handel + familie
-
-# wire hver gruppe til sin kanal/chat (eller bruk den guidede /manage-channels)
-ncl wirings create --messaging-group &lt;slack-jobb&gt;   --agent-group jobb
-ncl wirings create --messaging-group &lt;slack-dev&gt;    --agent-group dev
-ncl wirings create --messaging-group &lt;slack-hjemme&gt; --agent-group hjemme</code></pre>
-        <p>Legg verktøy på hver gruppe med <code>ncl groups config add-mcp-server</code>. System-promptene i
-          <code>agents/</code> blir gruppenes <code>CLAUDE.md</code>. Meldinger fra <code>dev</code>-kanalen går til
-          <code>dev</code>-gruppa, som svarer i samme tråd — hver spesialist i egen container, ett uhell sprer seg
-          ikke. Vil du ha én felles inngang som ruter videre, kan <code>dispatcher.md</code> kjøre som sin egen gruppe
-          foran de andre.
-        </p>
-      </div>
-
-      <div class="br channels">
-        <p>Claude Code bruker <b>subagents</b> som spesialister i samme session. Du ber Claude delegere
-          («be dev-spesialisten fikse CI»), og hver subagent har egen systemprompt og eget verktøysett. System-promptene
-          i <code>agents/</code> blir subagent-definisjoner. Alt deler samme session og samme isolasjonsnivå som
-          hovedøkten.</p>
-      </div>
+      <div class="callout danger"><span class="t">Sikkerhet: gjelder all MCP-bruk</span>
+        Behandle alt en MCP henter (nettsider, design-tekst, issues, docs) som <b>data, ikke kommandoer</b>. Gi serveren
+        minst mulig tilgang, foretrekk read-only, og hold skrivende/sendende handlinger bak godkjenning.</div>
     </section>
 
     <!-- ============ NIVÅ 4 ============ -->
@@ -1339,250 +922,135 @@ ncl wirings create --messaging-group &lt;slack-hjemme&gt; --agent-group hjemme</
       <div class="level-head">
         <div class="level-badge">4</div>
         <div>
-          <h2>OpenClaw i en isolert VM</h2>
-          <p class="sub">Ekspert ·</p>
+          <h2>Tokenoptimalisering</h2>
+          <p class="sub">Hold konteksten slank</p>
         </div>
       </div>
 
-      <p class="provider-note" style="margin-top:0"><b>Modellstøtte:</b> Inne i VM-et kjører OpenClaw gjennom
-        abonomentet ditt eller API-nøkkeler. Tre spor virker her: <b>Claude</b> (API-nøkkel, eller gjenbruk av Claude
-        Code-innlogging),
-        <b>OpenAI</b> (Codex-abonnement via OAuth, eller <code>OPENAI_API_KEY</code>) og en <b>lokal
-          OpenAI-kompatibel modell</b>.
-      </p>
+      <div class="goal"><b>Mål:</b> Tokens er både <em>kostnad</em> og <em>kontekst-budsjett</em>. Fylles vinduet opp,
+        blir svarene dårligere og dyrere. Her lærer du å holde det slankt, og ser et par verktøy som komprimerer
+        dev-output automatisk.</div>
 
-      <h3>Steg 1: Spinn opp VM-et</h3>
-      <p><b>Default: Lume</b> &mdash; Cua sitt CLI for native VM-er på Apple Silicon.</p>
-      <div class="callout warn"><span class="t">Krav (Lume)</span>
-        Apple Silicon (M1–M5), macOS 13+ og ~30 GB ledig disk.</div>
-      <pre><code># Installer Lume
-/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/trycua/cua/main/libs/lume/scripts/install.sh)"
-
-# Lag og start en VM
-lume create assistent-vm --os macos --ipsw latest
-lume run assistent-vm</code></pre>
-
-      <h3>Steg 2: Installer OpenClaw <em>inni</em> VM-et</h3>
-      <p>Alt herfra skjer i terminalen <b>inne i VM-et</b>, akkurat som Nivå 3 Steg 1, bare at hostenmaskinen
-        ikke ser noe av det:</p>
-      <pre><code># Krever Node 24 (anbefalt) eller Node 22.19+
-npm install -g openclaw@latest
-openclaw onboard --install-daemon   # installerer Gateway-daemonen (launchd) + leier deg gjennom oppsett
-openclaw gateway status             # Control UI: http://127.0.0.1:18789/ (inne i VM-et)</code></pre>
-      <p><code>onboard</code> kan sette opp både modell og auth for deg &mdash; vil du heller gjøre det for hånd,
-        ser du de tre sporene under. All config ligger i <code>~/.openclaw/openclaw.json</code> inne i VM-et;
-        system-prompten din bor i workspace-en (<code>~/.openclaw/workspace/SOUL.md</code> / <code>AGENTS.md</code>).
-      </p>
-
-      <h3>Steg 3: Velg modell og auth (inne i VM-et)</h3>
-      <p>Modellen velges som <code>provider/modell-id</code> under <code>agents.defaults.model</code> i
-        <code>~/.openclaw/openclaw.json</code>. Dette er den eneste delen som varierer per leverandør, men resten
-        av OpenClaw (workspace, skills) er likt:
-      </p>
-      <div class="po claude">
-        <span class="pill">Claude</span>
-        <div class="callout warn"><span class="t">Historikk: abonnement-OAuth ble sperret april 2026</span>
-          Anthropic stengte tredjeparts OAuth-bruk av Claude-abonnement 4. april 2026 (tredjepartsverktøy trekker nå
-          fra «extra usage»).Sjekk OpenClaw docs om Claude Code er tilgengelig igjen.</div>
-        <p>To måter:</p>
-        <ul>
-          <li><b>API-nøkkel:</b> sett <code>ANTHROPIC_API_KEY</code> i VM-ets miljø og velg modell:</li>
-        </ul>
-        <pre><code>openclaw models set anthropic/claude-opus-4-6
-openclaw models status</code></pre>
-        <ul>
-          <li><b>Claude CLI-gjenbruk:</b> installer og logg inn i Claude Code <em>inne i VM-et</em>, behold canonical
-            modell-ref og velg CLI-runtime:</li>
-        </ul>
-        <pre><code>{
-  agents: {
-    defaults: {
-      model: { primary: "anthropic/claude-opus-4-7" },
-      agentRuntime: { id: "claude-cli" }
-    }
-  }
-}</code></pre>
-      </div>
-      <div class="po openai">
-        <span class="pill">OpenAI</span>
-        <p>Prefikset velger ruta: <code>openai/gpt-5.5</code> = direkte API-nøkkel, <code>openai-codex/gpt-5.5</code>
-          = Codex-abonnement via OAuth. To måter å autentisere:</p>
-        <ul>
-          <li><b>Codex-abonnement (OAuth):</b> kjør <code>openclaw onboard --auth-choice openai-codex</code> (eller
-            <code>openclaw models auth login --provider openai-codex</code>; legg på <code>--device-code</code> i
-            headless VM). Ingen API-nøkkel &mdash; auth kommer fra ChatGPT/Codex-kontoen din, og OpenAI tillater
-            eksplisitt abonnement-OAuth i verktøy som OpenClaw.
-          </li>
-          <li><b>API-nøkkel:</b> sett <code>OPENAI_API_KEY</code> i VM-ets miljø. Mest forutsigbart for en alltid-på
-            gateway-host.</li>
-        </ul>
-        <p>Sett modellen via CLI:</p>
-        <pre><code># Abonnement (OAuth):
-openclaw models set openai-codex/gpt-5.5
-# API-nøkkel:
-openclaw models set openai/gpt-5.5
-openclaw models status            # bekreft primary + auth</code></pre>
-        <p>… eller direkte i <code>~/.openclaw/openclaw.json</code>:</p>
-        <pre><code>{
-  agents: {
-    defaults: {
-      model: { primary: "openai-codex/gpt-5.5" }
-    }
-  }
-}</code></pre>
-      </div>
-      <div class="po local">
-        <span class="pill">Lokal modell</span>
-        <p>To måter å gi VM-et en lokal, OpenAI-kompatibel modell:</p>
-        <ul>
-          <li><b>Ollama inne i VM-et</b> (enklest, alt på ett sted): installer Ollama i VM-et,
-            <code>ollama pull &lt;modell&gt;</code>, og bruk modell-ref <code>ollama/&lt;modell&gt;</code>.
-          </li>
-          <li><b>oMLX på verten</b>: la oMLX servere på <code>http://&lt;vert-IP&gt;:8000/v1</code> og registrer den
-            som egen provider. Bruk hostens IP &mdash; <em>ikke</em> <code>localhost</code>, som inne i VM-et peker på
-            VM-et selv.</li>
-        </ul>
-        <p>Egen provider mot oMLX i <code>~/.openclaw/openclaw.json</code>:</p>
-        <pre><code>{
-  models: {
-    providers: {
-      omlx: {
-        baseUrl: "http://&lt;vert-IP&gt;:8000/v1",
-        apiKey: "local",
-        api: "openai-completions",
-        models: [
-          { id: "mlx-community/Qwen3.6-35B-A3B-4bit",
-            name: "Qwen 3.6 35B (lokal)" }
-        ]
-      }
-    }
-  },
-  agents: {
-    defaults: {
-      model: { primary: "omlx/mlx-community/Qwen3.6-35B-A3B-4bit" }
-    }
-  }
-}</code></pre>
-        <p>Modell-ref-en splittes på <em>første</em> <code>/</code>: provider <code>omlx</code> + modell
-          <code>mlx-community/Qwen3.6-35B-A3B-4bit</code>. <code>apiKey</code> kan være hva som helst. Verifiser med
-          <code>openclaw models status</code>.
-        </p>
-      </div>
-
-      <h3>Steg 4: Lås det &mdash; og snapshot før første auth</h3>
-      <p>VM-et er den ytre grensa, men autovernet fra Nivå 3 gjelder fortsatt <em>inne</em> i det:</p>
-      <div class="callout danger"><span class="t">Autovern i VM-et</span>
-        <ul style="margin:8px 0 0">
-          <li><b>DM-pairing</b> står på som standard (<code>dmPolicy="pairing"</code>): ukjente avsendere får bare en
-            pairing-kode. Godkjenn deg selv med <code>openclaw pairing approve &lt;kanal&gt; &lt;kode&gt;</code>.</li>
-          <li>Behandl innkommende DM-er og ekstern tekst som <code>untrusted</code>.</li>
-          <li>Noe muffens
-            &rarr; <code>lume stop</code>, slett, gjenskap fra snapshot.</li>
-          <li>Kjør <code>openclaw doctor</code> for å fange risikabel DM-policy.</li>
-        </ul>
-      </div>
-    </section>
-
-    <!-- ============ LOKAL MODELL (egen side) ============ -->
-    <section class="level" data-level="local">
-      <div class="level-head">
-        <div class="level-badge">🖥️</div>
-        <div>
-          <h2>Sett opp en modell lokalt</h2>
-          <p class="sub">oMLX · OpenAI-kompatibelt API på localhost:8000</p>
-        </div>
-      </div>
-      <div class="goal"><b>Mål:</b> Kjøre <em>uten</em> abonnement, eller holde alt på egen maskin. Sett opp en
-        lokal modell som eksponerer et OpenAI-kompatibelt API på <code>http://localhost:8000</code>, den samme
-        adressen de andre nivåene peker «lokal modell»-sporet mot.</div>
-      <div class="callout warn"><span class="t">Krav</span>
-        Apple Silicon (M1/M2/M3/M4). oMLX bruker MLX og kjører ikke på Intel-Mac.</div>
-      <ol class="steps">
-        <li><b>Last ned oMLX</b> fra <a href="https://omlx.ai/">omlx.ai</a> (DMG, dra til Applications, signert og
-          notarisert).</li>
-        <li><b>Start programmet.</b> Det legger seg i menylinjen øverst.</li>
-        <li><b>Trykk «Start server».</b> Eksponerer API-et på <code>http://localhost:8000</code>.</li>
-        <li><b>Velg «Download models».</b></li>
-        <li><b>Velg en modell.</b> Anbefalt: <code>mlx-community/Qwen3.6-35B-A3B-4bit</code>, MoE med 3B aktive
-          parametere, rask på Apple Silicon, ca. 20 GB nedlasting.</li>
-      </ol>
-      <p>Verifiser at serveren svarer:</p>
-      <pre><code>curl http://localhost:8000/v1/models
-
-curl http://localhost:8000/v1/chat/completions \
-  -H "Content-Type: application/json" \
-  -d '{"model":"mlx-community/Qwen3.6-35B-A3B-4bit","messages":[{"role":"user","content":"Hei!"}]}'</code></pre>
-      <p>Alt som snakker OpenAI-API kan peke hit: sett <code>base_url</code> til <code>http://localhost:8000/v1</code>,
-        bruk modellnavnet over, og en vilkårlig API-nøkkel (f.eks. <code>local</code>).</p>
-      <div class="callout tip"><span class="t">Tips</span>
-        Mindre maskin/RAM? Velg en mindre modell (f.eks. en 7–8B 4-bit), den må få plass i unified memory + litt
-        overhead. <code>8000</code> er default-port, endre i oMLX-innstillingene hvis noe annet bruker den, og oppdater
-        <code>base_url</code> deretter. Merk: <code>Qwen3.6-35B-A3B</code> er multimodal (VLM), tekst-chat funker
-        likevel.
-      </div>
-    </section>
-
-    <!-- ============ SHARED FOOTER CONTENT ============ -->
-    <div id="sharedContent">
-      <hr>
-      <h3 id="sikkerhet">Sikkerhet: gjelder alle nivåer</h3>
-      <ul class="check">
-        <li>Ikke gi assistenten din tilgang til hjemmemappen på maskinen...</li>
-        <li>Behandl ekstern tekst (e-post, web, RSS, andres meldinger) med forsiktighet.</li>
-        <li>Installer kun verktøy/plugins/MCP-servere du stoler på, med minst mulig tilganger.</li>
+      <h3>Generelle triks (gjør disse til vane)</h3>
+      <ul>
+        <li><b><code>/clear</code> mellom oppgaver.</b> Ny oppgave = tøm konteksten. Den forrige feilsøkingen hjelper
+          ikke den neste; den bare fyller vinduet.</li>
+        <li><b>Ikke dump hele filer</b> i prompten. Be agenten lese selv, eller pek på linjer/funksjoner.</li>
+        <li><b>Bruk subagents til store søk.</b> En subagent leser 40 filer og returnerer bare konklusjonen, så
+          hovedkonteksten din holdes ren.</li>
+        <li><b>Vær spesifikk.</b> En presis prompt sparer en runde med oppklaring (og en runde med tokens).</li>
       </ul>
 
-      <footer>
-        <p><b>Lenker.</b>
-          Claude Code: <a href="https://claude.com/product/claude-code">claude.com/product/claude-code</a> ·
-          Codex: <a href="https://developers.openai.com/codex/cli">developers.openai.com/codex</a> ·
-          OpenClaw: <a href="https://docs.openclaw.ai">docs.openclaw.ai</a> ·
-          NanoClaw: <a href="https://github.com/nanocoai/nanoclaw">github</a> ·
-          Cua / Lume: <a href="https://github.com/trycua/cua">github.com/trycua/cua</a>
-        </p>
-      </footer>
-    </div>
+      <h3>rtk: Rust Token Killer <span style="color:var(--muted);font-weight:400">· demo</span></h3>
+      <p>Mye av token-bruken i dev går til output fra kommandoer som <code>git status</code>, <code>git diff</code>,
+        <code>npm test</code> og <code>ls</code>. <b>rtk</b> er en CLI-proxy som komprimerer den outputen før den når
+        konteksten, uten å miste informasjonen agenten faktisk trenger.</p>
+      <div class="card">
+        <b>Se forskjellen (live på skjerm):</b>
+        <pre><code># Samme operasjon, før og etter:
+git status            →  ~XXX tokens
+rtk git status        →  ~XX tokens   (60-90 % mindre)
+
+# Akkumulert besparelse over økten:
+rtk gain</code></pre>
+        <p style="font-size:13.5px;color:var(--muted);margin-bottom:0">Poenget er ikke ett enkelt kall, men summen:
+          over en hel arbeidsdag med hundrevis av kommandoer blir det mye spart kontekst (= bedre svar) og mye spart
+          kostnad.</p>
+      </div>
+      <h3>context-mode <span style="color:var(--muted);font-weight:400">· plugin / MCP</span></h3>
+      <p>Et beslektet verktøy som angriper samme problem fra en annen vinkel:
+        <a href="https://github.com/mksglu/context-mode">context-mode</a>. Der rtk komprimerer kommando-output, kjører
+        context-mode store tool-outputs i en isolert subprosess slik at bare det relevante havner i konteksten
+        (utviklerne oppgir opptil 98 % mindre), og holder et sesjonsminne så agenten ikke glemmer hvilke filer og
+        oppgaver som er aktive når samtalen komprimeres. Den finnes som Claude Code-plugin (marketplace) eller
+        MCP-server.</p>
+      <div class="callout tip"><span class="t">Take-away</span>
+        Du trenger ikke disse verktøyene for å jobbe smart; vanene over tar deg langt. Men når du merker at lange økter
+        blir trege eller «glemsomme», er det som regel et kontekst-budsjett-problem. Da er verktøy som <b>rtk</b> og
+        <b>context-mode</b> løsninger verdt å kjenne til.
+      </div>
+    </section>
+
+    <!-- ============ NIVÅ 5 ============ -->
+    <section class="level" data-level="5">
+      <div class="level-head">
+        <div class="level-badge">5</div>
+        <div>
+          <h2>Avansert bruk</h2>
+          <p class="sub">Sandboxing og alltid-på</p>
+        </div>
+      </div>
+
+      <div class="goal"><b>Mål:</b> Gi agenten mer autonomi uten å gi fra deg kontrollen. Frem til nå har regelen
+        vært «hold godkjenning på». Sandboxing snur det: kjører du agenten i et isolert miljø, kan den ikke skade noe
+        utenfor, og du kan trygt la den jobbe friere og heller lese diffen etterpå.</div>
+
+      <h3>Sandboxing: kjør agenten isolert</h3>
+      <p>Godkjenning ett steg om gangen er trygt, men tregt. Alternativet er å gi agenten et avgrenset miljø der den
+        ikke <em>kan</em> gjøre skade, og så slippe den løsere. Tre nivåer av isolasjon, fra lett til tungt:</p>
+      <ul>
+        <li><b>Git worktree</b> (lettest). En egen utsjekk av repoet i en separat mappe. La agenten jobbe der, så er
+          hovedmappa di urørt, og du kan kjøre flere agenter parallelt uten at de tråkker på hverandre.
+          <pre><code>git worktree add ../repo-ai-eksperiment -b ai-eksperiment
+cd ../repo-ai-eksperiment &amp;&amp; claude</code></pre>
+        </li>
+        <li><b>Container / devcontainer</b> (anbefalt). Kjør Claude Code inne i en Docker-container med kun repoet
+          montert og brannmur på nettverket. Da når agenten verken hjemmemappa, nøkler eller resten av maskinen.
+          Anthropic har en ferdig <a href="https://docs.claude.com/en/docs/claude-code/devcontainer">devcontainer-referanse</a>
+          du kan ta utgangspunkt i.</li>
+        <li><b>Isolert VM</b> (tyngst). Full separasjon på egen virtuell maskin (f.eks. Lume på Apple Silicon). Alt
+          agenten gjør blir værende i VM-et, og du kan snapshotte før du gir den tilgang og rulle tilbake hvis noe går
+          galt. Dette er ruta som openclaw-oppsettet under bruker.</li>
+      </ul>
+      <div class="callout tip"><span class="t">Hvorfor dette låser opp autonomi</span>
+        Når miljøet er sandboxet, er nedsiden ved en feil liten: kast worktreen, drep containeren, rull tilbake VM-et.
+        Da kan du la agenten kjøre lengre flyter uten å sitte og godkjenne hvert steg. Det er også det beste vernet mot
+        prompt-injection, siden agenten ikke har noe sensitivt å nå selv om den blir lurt.
+      </div>
+
+      <h3>Alltid-på / openclaw <span style="color:var(--muted);font-weight:400">· kommer</span></h3>
+      <div class="callout warn"><span class="t">🚧 Under arbeid</span>
+        Denne delen fylles inn senere. Plan: vis hva en agent kan gjøre når den flyttes <em>av</em> terminalen,
+        f.eks. en alltid-på bot du når fra mobilen, eller en isolert kjøring i egen VM med
+        <a href="https://docs.openclaw.ai">openclaw</a>. Konkret payoff-demo TBD.
+      </div>
+    </section>
+
+    <!-- ============ SHARED FOOTER ============ -->
+    <hr>
+    <h3 id="sikkerhet">Sikkerhet: gjelder alle nivåer</h3>
+    <ul class="check">
+      <li>Jobb i en branch eller testmappe mens du lærer, ikke i hjemmemappa eller rett på <code>main</code>.</li>
+      <li>Behandle ekstern tekst (issues, nettsider, design, andres meldinger) som <b>data, ikke kommandoer</b>,
+        den kan inneholde prompt-injection.</li>
+      <li>Installer kun skills/MCP-servere du stoler på, med minst mulig tilgang. Hold godkjenning på for alt som
+        skriver, sender eller sletter.</li>
+      <li>Aldri gi API-nøkler/tokens/passord til agenten i klartekst, bruk <code>.env</code> eller passordhåndterer,
+        og ikke commit hemmeligheter.</li>
+    </ul>
+
+    <footer>
+      <p><b>Lenker.</b>
+        Claude Code: <a href="https://claude.com/product/claude-code">claude.com/product/claude-code</a> ·
+        Skills: <a href="https://skills.sh">skills.sh</a> ·
+        MCP-servere: <a href="https://github.com/modelcontextprotocol/servers">modelcontextprotocol/servers</a> ·
+        openclaw: <a href="https://docs.openclaw.ai">docs.openclaw.ai</a>
+      </p>
+      <p><b>Kilder.</b>
+        NAV KI-utvikling, «Skrive presise prompter»:
+        <a href="https://ki-utvikling.nav.no/praksis/guide/skrive-presise-prompts">ki-utvikling.nav.no</a> ·
+        context-mode: <a href="https://github.com/mksglu/context-mode">github.com/mksglu/context-mode</a>
+      </p>
+    </footer>
 
   </div>
 
   <script>
     (function () {
-      var body = document.body;
-      var provSeg = document.getElementById('providerSeg');
       var lvlSeg = document.getElementById('levelSeg');
-      var localBtn = document.getElementById('localBtn');
-      var shared = document.getElementById('sharedContent');
-      var note = document.getElementById('provNote');
-      var provGroup = document.getElementById('provGroup');
       var branchSeg = document.getElementById('branchSeg');
       var l3 = document.querySelector('section.level[data-level="3"]');
 
-      var notes = {
-        claude: 'Du følger <b>Claude</b>-sporet. Klient: <b>Claude-appen på desktop</b> (Cowork) med Pro/Max-innlogging; du når den fra mobilen via <b>Remote Control / Dispatch</b>.',
-        openai: 'Du følger <b>OpenAI</b>-sporet. Klient: <b>Codex</b> (CLI / macOS-app) med ChatGPT-innlogging; du styrer den fra <b>ChatGPT-mobilappen</b>.',
-        copilot: 'Du følger <b>GitHub Copilot</b>-sporet. Klient: <b>GitHub Copilot-appen</b> (desktop, tech preview) eller <b>Copilot CLI</b>. Krever Copilot Pro/Pro+/Business/Enterprise.',
-        local: 'Du følger <b>lokal modell</b>-sporet. Du kjører en modell på egen maskin (se «🖥️ Sett opp en modell lokalt») og peker verktøyene mot <b>localhost:8000</b> — alt blir værende på maskinen.'
-      };
-
-      // Hvilke leverandørspor hvert nivå faktisk har innhold for.
-      // Nivå 1 og 2 dekker alle fire. Nivå 3 har Claude Channels for Claude
-      // og lokal NanoClaw via localhost:8000. Nivå 4 kjører på egen nøkkel.
-      // Nivå 1, 2 og 4 styres av leverandørvelgeren. Nivå 3 styres i stedet av
-      // sin egen branch-velger (NanoClaw / Claude Code Channels) og ignorerer leverandør.
-      var levelProviders = {
-        '1': ['claude', 'openai', 'copilot', 'local'],
-        '2': ['claude', 'openai', 'copilot', 'local'],
-        '3': ['claude', 'openai', 'copilot', 'local'],
-        '4': ['claude', 'openai', 'local'],
-        'local': ['claude', 'openai', 'copilot', 'local']
-      };
-
-      function setProvider(p) {
-        body.setAttribute('data-provider', p);
-        [].forEach.call(provSeg.children, function (b) { b.classList.toggle('active', b.dataset.v === p); });
-        note.innerHTML = notes[p];
-        try { localStorage.setItem('ws_provider', p); } catch (e) { }
-      }
       function setBranch(b) {
         if (!l3) return;
         l3.setAttribute('data-branch', b);
@@ -1591,41 +1059,55 @@ curl http://localhost:8000/v1/chat/completions \
       }
       function setLevel(l) {
         [].forEach.call(lvlSeg.children, function (b) { b.classList.toggle('active', b.dataset.l === l); });
-        localBtn.classList.toggle('active', l === 'local');
-        shared.style.display = (l === 'local') ? 'none' : '';
         [].forEach.call(document.querySelectorAll('section.level'), function (s) {
           s.classList.toggle('active', s.dataset.level === l);
         });
-        // Nivå 3 bruker branch-velgeren, ikke leverandør: skjul leverandørvelgeren der.
-        var lvl3 = (l === '3');
-        provGroup.style.display = lvl3 ? 'none' : '';
-        note.style.display = lvl3 ? 'none' : '';
-        // Vis kun leverandør-knapper nivået støtter; bytt spor hvis nåværende ikke støttes.
-        var allowed = levelProviders[l] || ['claude', 'openai'];
-        [].forEach.call(provSeg.children, function (b) {
-          b.style.display = (allowed.indexOf(b.dataset.v) === -1) ? 'none' : '';
-        });
-        if (allowed.indexOf(body.getAttribute('data-provider')) === -1) {
-          setProvider(allowed[0]);
-        }
         try { localStorage.setItem('ws_level', l); } catch (e) { }
         window.scrollTo({ top: 0, behavior: 'smooth' });
       }
 
-      provSeg.addEventListener('click', function (e) { var b = e.target.closest('button'); if (b) setProvider(b.dataset.v); });
       lvlSeg.addEventListener('click', function (e) { var b = e.target.closest('button'); if (b) setLevel(b.dataset.l); });
-      localBtn.addEventListener('click', function () { setLevel('local'); });
       if (branchSeg) branchSeg.addEventListener('click', function (e) { var b = e.target.closest('button'); if (b) setBranch(b.dataset.b); });
 
-      var savedP = 'claude', savedL = '1', savedB = 'nanoclaw';
+      var savedL = '0', savedB = 'docs';
       try {
-        savedP = localStorage.getItem('ws_provider') || 'claude';
-        savedL = localStorage.getItem('ws_level') || '1';
-        savedB = localStorage.getItem('ws_branch') || 'nanoclaw';
+        savedL = localStorage.getItem('ws_level') || '0';
+        savedB = localStorage.getItem('ws_branch') || 'docs';
       } catch (e) { }
-      setProvider(savedP);
       setBranch(savedB);
       setLevel(savedL);
+
+      // Kopier-til-utklippstavle i alle kodefelt
+      [].forEach.call(document.querySelectorAll('pre'), function (pre) {
+        var code = pre.querySelector('code');
+        var text = (code ? code.innerText : pre.innerText);
+        var btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'copy-btn';
+        btn.textContent = 'Kopier';
+        btn.setAttribute('aria-label', 'Kopier kode');
+        btn.addEventListener('click', function () {
+          function done() {
+            btn.textContent = 'Kopiert!';
+            btn.classList.add('copied');
+            setTimeout(function () { btn.textContent = 'Kopier'; btn.classList.remove('copied'); }, 1500);
+          }
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(text).then(done, function () { fallback(); });
+          } else { fallback(); }
+          function fallback() {
+            var ta = document.createElement('textarea');
+            ta.value = text;
+            ta.style.position = 'fixed';
+            ta.style.opacity = '0';
+            document.body.appendChild(ta);
+            ta.select();
+            try { document.execCommand('copy'); done(); } catch (e) { }
+            document.body.removeChild(ta);
+          }
+        });
+        pre.appendChild(btn);
+      });
     })();
   </script>
 </body>
