@@ -1,24 +1,25 @@
 # Plan: AI-utviklerverktøy-workshop for sommerstudenter
 
-**Varighet:** 2 timer · **Verktøy:** Claude Code (alle har det installert) · **Format:** hands-on på egen sommerjobb-kode · **Forkunnskap:** teori dekkes i presentasjon før workshop, så siden er handlingsorientert med lite forklarende tekst.
+**Varighet:** 2 timer · **Verktøy:** Claude Code (alle har det installert) · **Format:** hands-on, alle bygger den samme værmeldingstjenesten **Bekkværet** · **Forkunnskap:** teori dekkes i presentasjon før workshop, så siden er handlingsorientert med lite forklarende tekst.
 
 ## Premiss
 
-Studentene jobber på **forskjellige steder med forskjellig stack**. Derfor kan vi ikke plante bugs i en felles repo — alle oppgaver må fungere på *hvilken som helst* kodebase. Det vrir oppgavene fra "løs denne planlagte bugen" til "gjør dette på DIN repo". Det er en feature, ikke en begrensning: de lærer triks de tar med rett inn i arbeidshverdagen.
+Hele workshopen er én gjennomgående tråd: alle bygger **Bekkværet**, en liten værmeldingstjeneste. «Før vi begynner» lager en helt ustyrt baseline (samme prompt til alle, AI tar alle valg, ingen skills), og de neste nivåene bygger den videre med retning, skills og verktøy. Fordelen: oppgavene er konkrete og delte, alle kan sammenligne resultater, og enhets-/format-konvensjoner for vær gir en naturlig skill-oppgave. Se [ADR 0007](adr/0007-bekkvaeret-through-line.md).
 
-## Struktur — 4 nivå (tema-progresjon, ikke vanskelighetsgrad)
+## Struktur
 
-Beholder visuell stil og nivå-oppsett fra forrige workshop, men **dropper leverandør-bytteren** (kun Claude) og gjør nivåene til en tema-sekvens.
+Beholder visuell stil og nivå-oppsett fra forrige workshop, men **dropper leverandør-bytteren** (kun Claude) og gjør nivåene til en tema-sekvens. En egen «Før vi begynner»-fane ligger først.
 
-| Nivå | Tema | Tid | Hands-on på egen repo |
+| Fane | Tema | Tid | Hands-on (bygger Bekkværet) |
 |------|------|-----|------------------------|
-| **1** | Agent-loopen: chatbot vs. agent | ~10 min | Kort oppvarming — studentene kan Claude Code alt, så utforsk-oppgaven er kuttet. Én liten ekte task for å kjenne igjen loopen |
-| **2** | Skills | ~40 min | Utvidet intro (hva/når · CLAUDE.md vs skill vs slash) + kuratert liste over nyttige skills + bygg «følg-vår-kodestil»-skill fra egen repo |
-| **3** | MCP | ~30 min | Koble på én server som passer din stack (meny) |
-| **4** | Tokenoptimalisering | ~20 min | Vane-triks + rtk-demo (token før/etter) |
-| **5** | Avansert bruk | ~20 min | openclaw / alltid-på (plassholder) |
+| **Før vi begynner** | Baseline uten føringer | ~10 min | Felles prompt: lag værside for Oslo, AI tar alle valg, ingen skills. Sammenlign variasjon i kode og visuelt |
+| **1** | Agent-loopen + gode vaner | ~15 min | Fem vaner (branch, plan, kontekst, harness-tilgang, presise prompter) + Spec-Driven Development (spec-kit). Ingen egen task |
+| **2** | Skills | ~35 min | Intro (CLAUDE.md vs skill vs slash) + lås stacken i CLAUDE.md + skills.sh + bygg konvensjons-skill(s) for Bekkværet: m/s, °C, norsk tid, mm/t |
+| **3** | MCP | ~30 min | Eksempelliste over MCP-servere + oppgave: koble på Figma og bygg Bekkværet fra skissa |
+| **4** | Tokenoptimalisering | ~15 min | Vane-triks + rtk + context-mode |
+| **5** | Avansert bruk | ~15 min | Sandboxing (worktree/container/VM) + openclaw (plassholder) |
 
-Buffer/overflow lever i Nivå 4. 2 timer er stramt for 5 tema hands-on — Nivå 4 er bevisst "mykt" så det kan kuttes uten å ødelegge.
+2 timer er stramt. «Før vi begynner» og Nivå 4/5 er bevisst fleksible, så de kan trimmes uten å ødelegge kjernen (Tips, Skills, MCP).
 
 ---
 

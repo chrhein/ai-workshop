@@ -1,6 +1,6 @@
 # ADR 0003 — Egen sommerjobb-repo, ikke felles sandbox
 
-**Status:** Vedtatt · **Dato:** 2026-06-28
+**Status:** Erstattet av [0007](0007-bekkvaeret-through-line.md) · **Dato:** 2026-06-28
 
 ## Kontekst
 Ekte-kode-oppgaver trenger en repo. To valg: (a) felles forberedt sandbox med plantede oppgaver, eller (b) studentens egen sommerjobb-kode. Studentene sitter på forskjellige steder med forskjellig stack.

@@ -139,13 +139,6 @@
       color: #0b0d12
     }
 
-    /* aktiv MCP-verktøy-fane (branch-velgeren) */
-    .seg.branches button.active {
-      background: var(--accent-soft);
-      color: var(--ink);
-      box-shadow: inset 0 0 0 1px var(--accent)
-    }
-
     .clienthint {
       margin-left: auto;
       font-size: 13.5px;
@@ -417,23 +410,6 @@
       color: var(--danger)
     }
 
-    /* branch / menyvalg-filtrering (Nivå 3 MCP-meny) */
-    .branch-pick {
-      margin: 4px 0 18px;
-      flex-wrap: wrap
-    }
-
-    .br {
-      display: none
-    }
-
-    .level[data-branch="playwright"] .br.playwright,
-    .level[data-branch="figma"] .br.figma,
-    .level[data-branch="jira"] .br.jira,
-    .level[data-branch="docs"] .br.docs {
-      display: block
-    }
-
     .pill {
       display: inline-block;
       font-size: 11px;
@@ -487,8 +463,8 @@
     <div class="wrap">
       <span class="kicker">Sommerjobb · AI-utviklerverktøy</span>
       <h1>AI i utviklerhverdagen</h1>
-      <p class="lede">Fem korte, praktiske nivåer i Claude Code som du kjører på din egen sommerjobb-kode.
-        Teorien tok vi i presentasjonen; her gjør vi det.</p>
+      <p class="lede">Fem korte, praktiske nivåer i Claude Code. Gjennom hele bygger vi det samme produktet:
+        <b>Bekkværet</b>, en liten værmeldingstjeneste. Teorien tok vi i presentasjonen; her gjør vi det.</p>
     </div>
   </header>
 
@@ -506,8 +482,8 @@
             <button data-l="5">5 · Avansert bruk</button>
           </div>
         </div>
-        <p class="clienthint">Verktøy: <b>Claude Code</b> (Desktop-appen eller terminalen), pekt mot ditt eget
-          sommerjobb-repo.</p>
+        <p class="clienthint">Verktøy: <b>Claude Code</b> (Desktop-appen eller terminalen). Prosjekt:
+          <b>Bekkværet</b>, værtjenesten vi bygger sammen.</p>
       </div>
     </div>
   </div>
@@ -526,17 +502,22 @@
 
       <div class="goal"><b>Mål:</b> Alle gir den nøyaktig samme prompten og lar AI-en ta <em>alle</em> valg selv.
         Etterpå sammenligner vi: hvor ulikt blir resultatet, både koden og det visuelle, når ingen styrer teknologi,
-        design eller datakilde? Dette er nullpunktet vi måler resten av workshopen mot.</div>
+        design eller datakilde? Dette er <b>Bekkværet</b> i sin enkleste form, og nullpunktet vi måler resten av
+        workshopen mot. Gjennom de neste nivåene bygger vi den videre med retning, skills og verktøy.</div>
 
       <h3>1) Start i en tom mappe</h3>
       <p>Ikke bruk et eksisterende prosjekt her. Lag en fersk, tom mappe og åpne Claude Code i den (koble til mappa i
         Desktop-appen, eller <code>cd</code> inn og kjør <code>claude</code> i terminalen).</p>
-      <pre><code>mkdir vaer-oslo &amp;&amp; cd vaer-oslo
+      <pre><code>mkdir bekkvaeret &amp;&amp; cd bekkvaeret
 claude</code></pre>
 
       <h3>2) Lim inn denne prompten, ordrett</h3>
       <p>Ikke legg til, fjern eller presiser noe. Alle skal kjøre nøyaktig det samme:</p>
-      <pre><code>"Lag en nettside som viser værmeldingen for Oslo i morgen.
+      <pre><code>"Lag en værmeldingstjeneste som heter Bekkværet. Den skal vise:
+- nåværende vær (temperatur og forhold)
+- varsel for de neste 7 dagene
+- nedbør den neste timen
+- mulighet for å bytte mellom Oslo og Trondheim
 
 Du tar alle valg selv: teknologi, design, datakilde, alt.
 Ikke bruk skills eller andre instruksjonsfiler.
@@ -553,7 +534,8 @@ ferdig, og si ifra først når den er klar til å åpnes."</code></pre>
         <li>Hvilken <b>stack</b> valgte den? En ren HTML-fil, React, et rammeverk, en byggeprosess?</li>
         <li>Hvordan ser det <b>visuelt</b> ut, og hvor mye kode ble det?</li>
         <li>Hentet den <b>ekte værdata</b> (f.eks. fra et API), eller fant den på tallene?</li>
-        <li>Funker «i morgen» faktisk, eller viser den dagens vær?</li>
+        <li>Fikk den med alle delene: nåværende vær, de neste 7 dagene, nedbør neste time og bytte mellom Oslo og
+          Trondheim?</li>
       </ul>
       <div class="callout tip"><span class="t">Hva vi lærer av dette</span>
         Samme prompt gir vidt forskjellige resultater. Det er nettopp derfor resten av workshopen handler om å gi
@@ -684,13 +666,13 @@ uv tool install specify-cli --from git+https://github.com/github/spec-kit.git</c
         <div class="level-badge">2</div>
         <div>
           <h2>Skills: lær agenten teamets måte</h2>
-          <p class="sub">Finn, bruk og lag egne · hands-on på eget repo</p>
+          <p class="sub">Finn, bruk og lag egne · konvensjoner for Bekkværet</p>
         </div>
       </div>
 
       <div class="goal"><b>Mål:</b> En <b>skill</b> er en gjenbrukbar instruksjonspakke (en <code>SKILL.md</code>) som
         agenten laster <em>selv</em> når den er relevant. Du skal forstå når skills er nyttige, finne ferdige, og bygge
-        én egen: en «følg-vår-kodestil»-skill utledet fra din egen kodebase.</div>
+        din egen: en skill (eller to) som låser enhetene og formatene Bekkværet skal bruke for værdata.</div>
 
       <h3>Hva en skill egentlig er, og hvorfor</h3>
       <p>Tenk på en skill som <em>nedskrevet ekspertise</em> du gir agenten én gang, og som den selv henter fram når den
@@ -738,8 +720,8 @@ uv tool install specify-cli --from git+https://github.com/github/spec-kit.git</c
           <th>Hva den gjør</th>
         </tr>
         <tr>
-          <td><b>Følg-vår-kodestil</b></td>
-          <td>Holder ny kode i teamets faktiske konvensjoner (den vi bygger nedenfor).</td>
+          <td><b>Domenekonvensjoner</b></td>
+          <td>Låser enheter, formater og terminologi for et domene (den vi bygger nedenfor for Bekkværet).</td>
         </tr>
         <tr>
           <td><b>PR-beskrivelse</b></td>
@@ -771,66 +753,105 @@ uv tool install specify-cli --from git+https://github.com/github/spec-kit.git</c
         sannsynligvis en skill der. Hold den liten og spesifikk; én skill = én ferdighet.
       </div>
 
-      <h3>1) Finn og installer skills</h3>
+      <h3>1) Lås teknologivalgene i en CLAUDE.md</h3>
+      <p>Husk hvor sprikende «Før vi begynner» ble: ingen hadde fortalt agenten hva slags app Bekkværet skulle være.
+        Før vi bygger videre, fester vi valgene i en <code>CLAUDE.md</code>, den alltid-lastede konteksten fra tabellen
+        over. Da slutter agenten å finne opp stacken på nytt for hver økt.</p>
+      <p>Bestem deg for en stack, det er din beslutning, og be agenten skrive den ned:</p>
+      <pre><code>"Lag en CLAUDE.md i rota for Bekkværet. Skriv ned hvilken stack vi
+bruker, hvordan prosjektet kjøres og testes, mappestrukturen, og
+et par regler du skal følge. Hold det kort."</code></pre>
+      <p>Et eksempel på hva fila kan inneholde:</p>
+      <pre><code># Bekkværet
+
+## Stack
+- React + TypeScript + Vite, ren CSS (bytt til det du valgte)
+- Værdata: met.no Locationforecast
+
+## Kommandoer
+- npm install · npm run dev · npm test
+
+## Regler
+- Ikke bytt rammeverk eller legg til store avhengigheter uten å spørre.
+- All kildekode under src/.</code></pre>
+      <p>Test at den virker: start en ny økt og spør <em>«hvilken stack bruker dette prosjektet?»</em>. Agenten skal
+        svare fra CLAUDE.md uten at du forklarer noe.</p>
+
+      <h3>2) Finn og installer skills</h3>
       <p><span class="pill">skills.sh</span> <a href="https://skills.sh">skills.sh</a> er en markedsplass for skills.
         Installer med ett kall (åpen standard: samme <code>SKILL.md</code> funker for Claude, Codex og Copilot):</p>
       <pre><code>npx skills add &lt;repo-url&gt; --skill &lt;skill-navn&gt;</code></pre>
-      <p>Til oppgaven under henter vi to hjelpere:</p>
-      <pre><code>npx skills add https://github.com/github/awesome-copilot --skill write-coding-standards-from-file
-npx skills add https://github.com/mattpocock/skills --skill grill-me</code></pre>
+      <p>Bla i katalogen og se hva som finnes. Til oppgaven under henter vi <code>grill-me</code>, som vi bruker til å
+        stress-teste skillen vår:</p>
+      <pre><code>npx skills add https://github.com/mattpocock/skills --skill grill-me</code></pre>
 
-      <h3>2) Bygg «følg-vår-kodestil»-skillen fra ditt eget repo</h3>
-      <p>I stedet for å skrive konvensjoner fra hukommelsen lar du agenten <em>utlede</em> dem fra koden som
-        faktisk finnes. Deretter stress-tester du resultatet.</p>
+      <h3>3) Bygg konvensjons-skill(s) for Bekkværet</h3>
+      <p>En værtjeneste lever av <em>konsistente</em> enheter og formater. I stedet for å gjenta «vind i m/s, temp i
+        Celsius, norsk dato» i hver eneste prompt, pakker du reglene i en skill agenten laster automatisk hver gang
+        den jobber med vær i Bekkværet.</p>
       <ol class="steps">
-        <li><b>Utled standarden.</b> Pek <code>write-coding-standards-from-file</code> mot et representativt utvalg av
-          repoet:
-          <pre><code>"Bruk write-coding-standards-from-file på src/ og trekk ut våre
-faktiske konvensjoner: indentering, navngiving, import-rekkefølge,
-kommentarstil, mønstre for feilhåndtering og tester."</code></pre>
+        <li><b>Bestem konvensjonene.</b> For Bekkværet bruker vi blant annet:
+          <ul>
+            <li>Temperatur i <b>Celsius</b> (f.eks. <code>-3 °C</code>, <code>14 °C</code>)</li>
+            <li>Vind i <b>meter per sekund</b> (<code>5 m/s</code>), vindretning som kompass (N, NØ, Ø, SØ, …)</li>
+            <li>Nedbør i <b>millimeter per time</b> (<code>1,2 mm/t</code>) for timesvarsel, og <b>akkumulert per
+              døgn</b> (<code>8 mm/døgn</code>) for dagsoversikt</li>
+            <li>Tidspunkter på <b>norsk format</b>, 24-timers (<code>tirsdag 30. juni, kl. 14:00</code>), med komma
+              som desimalskilletegn</li>
+          </ul>
         </li>
-        <li><b>Grill utkastet.</b> Kjør en <code>/grilling</code> (fra grill-me) mot det:
-          <em>«Er hver regel faktisk sann i repoet? Hvor er det uenighet i koden? Hva mangler?»</em>
-          Et utkast som ikke tåler grilling, hører ikke hjemme i skillen.</li>
-        <li><b>Lagre som skill.</b> Be agenten skrive resultatet til
-          <code>.claude/skills/var-kodestil/SKILL.md</code> med en presis <code>description</code>, f.eks.:
+        <li><b>Lag skillen.</b> Be agenten skrive den til <code>.claude/skills/bekkvaer-enheter/SKILL.md</code> med en
+          presis <code>description</code> så den lastes automatisk når noen jobber med værdata:
           <pre><code>---
-name: var-kodestil
-description: Bruk når du skriver eller endrer kode i dette repoet,
-  så den følger teamets faktiske konvensjoner.
+name: bekkvaer-enheter
+description: Bruk alltid når du viser eller behandler værdata i
+  Bekkværet, så enheter og formater blir konsistente.
 ---
-(reglene utledet over)</code></pre>
+Enheter og format for all værdata i Bekkværet:
+- Temperatur: Celsius, f.eks. "-3 °C", "14 °C".
+- Vind: meter per sekund, f.eks. "5 m/s". Retning som kompass:
+  N, NØ, Ø, SØ, S, SV, V, NV.
+- Nedbør: "1,2 mm/t" for timesvarsel, "8 mm/døgn" akkumulert.
+- Lufttrykk: hektopascal, f.eks. "1013 hPa".
+- Tid: norsk, 24-timers, "tirsdag 30. juni, kl. 14:00".
+  Komma som desimalskilletegn.</code></pre>
         </li>
-        <li><b>Test at den lastes.</b> Start en ny oppgave: <em>«Skriv en liten ny hjelpefunksjon for X.»</em> Sjekk at
-          agenten følger stilen, og at den nevner at den brukte <code>var-kodestil</code>.</li>
+        <li><b>Vurder å dele i to.</b> Enheter (m/s, °C, mm) og <em>norsk formatering</em> (dato, klokke, desimaltegn)
+          er to ulike ansvar. Det er ofte renere som to skills, <code>bekkvaer-enheter</code> og
+          <code>norsk-formatering</code>, enn én stor. Husk: én skill = én ferdighet.</li>
+        <li><b>Grill skillen.</b> Kjør en <code>/grilling</code> (fra grill-me) mot utkastet:
+          <em>«Er hver regel entydig? Mangler det enheter eller grensetilfeller, som vindstille, frost eller
+          manglende data?»</em></li>
+        <li><b>Test at den lastes.</b> Start en ny oppgave: <em>«Legg til en 7-dagers oversikt i Bekkværet.»</em>
+          Sjekk at agenten bruker m/s, °C, mm og norsk tid <b>uten at du gjentar det</b>, og at den nevner at den
+          brukte skillen.</li>
       </ol>
 
       <div class="callout tip"><span class="t">Hvorfor dette er nyttig på jobb</span>
-        PR-ene dine følger teamets stil fra første utkast, noe som gir mindre review-støy. Og du har sett
-        meta-mønsteret: en agent
-        leser kode for å bygge et verktøy den selv bruker senere. Samme oppskrift funker for en
-        <code>/pr-beskrivelse</code>-skill, en test-skill, eller en «vår commit-stil»-skill.
+        Domenekonvensjoner, altså enheter, formater og terminologi, er noe av det mest verdifulle å pakke i en skill:
+        det er regler hele teamet er enige om, men som agenten ellers bryter litt forskjellig hver gang. Samme grep
+        funker for valuta, datoer, API-felter eller hva enn domenet ditt krever presist.
       </div>
 
       <div class="callout warn"><span class="t">Hvis <code>npx skills add</code> feiler</span>
-        Backup: skriv skillen for hånd. Lag <code>.claude/skills/var-kodestil/SKILL.md</code>, be agenten lese
-        5-10 filer og foreslå 3-5 konkrete regler, og rediger til de stemmer.
+        Du trenger strengt tatt ikke grill-me. Lag <code>.claude/skills/bekkvaer-enheter/SKILL.md</code> for hånd med
+        reglene over, og be agenten lese gjennom og foreslå grensetilfeller du har glemt.
       </div>
     </section>
 
     <!-- ============ NIVÅ 3 ============ -->
-    <section class="level" data-level="3" data-branch="docs">
+    <section class="level" data-level="3">
       <div class="level-head">
         <div class="level-badge">3</div>
         <div>
           <h2>MCP: koble agenten på verktøyene dine</h2>
-          <p class="sub">Hva, finn, koble på · hands-on på egen stack</p>
+          <p class="sub">Hva, finn, koble på · Figma til Bekkværet</p>
         </div>
       </div>
 
       <div class="goal"><b>Mål:</b> <b>MCP (Model Context Protocol)</b> er en åpen standard for å koble agenten til
         eksterne verktøy og datakilder via en liten «server» (browser, design, issue-tracker, dokumentasjon).
-        Du skal koble på <em>én</em> server som passer din stack, og bruke den i en oppgave.</div>
+        Du skal koble Claude Code på <b>Figma</b> og bygge Bekkværet videre fra en ferdig skisse.</div>
 
       <h3>Hvordan koble på</h3>
       <p>Mønsteret er alltid det samme:</p>
@@ -844,73 +865,37 @@ claude mcp list        # se hva som er koblet på
         <a href="https://github.com/modelcontextprotocol/servers">modelcontextprotocol/servers</a>). De fleste verktøy
         du bruker på jobb har en MCP i dag.</p>
 
-      <h3>Velg den som passer din stack</h3>
-      <p>Velg <b>én</b> og følg oppskriften. Sitter du fast på auth, hopp til <b>Docs-lookup</b> (ingen innlogging).</p>
+      <h3>Et hav av servere</h3>
+      <p>Det finnes hundrevis av MCP-servere, og de fleste verktøyene du bruker på jobb har en. Noen eksempler:</p>
+      <ul>
+        <li><b>Playwright</b> &middot; gir agenten en nettleser den kan åpne, klikke i og lese fra (test og verifiser UI)</li>
+        <li><b>Context7 / docs</b> &middot; slår opp oppdatert API-dokumentasjon, så agenten slutter å gjette på utdaterte API-er</li>
+        <li><b>Atlassian (Jira / Confluence)</b> &middot; leser saker og sider</li>
+        <li><b>GitHub</b> &middot; issues, pull requests og kodesøk</li>
+        <li><b>Slack</b> &middot; leser og poster meldinger</li>
+        <li><b>Postgres og andre databaser</b> &middot; spør mot skjema og data</li>
+      </ul>
+      <p>I dag kobler vi på <b>Figma</b> og bygger Bekkværet fra en ferdig skisse.</p>
 
-      <div class="seg branches branch-pick" id="branchSeg">
-        <button data-b="docs" class="active">📚 Docs-lookup</button>
-        <button data-b="playwright">🌐 Playwright</button>
-        <button data-b="figma">🎨 Figma</button>
-        <button data-b="jira">📋 Jira / Atlassian</button>
-      </div>
-
-      <!-- DOCS (null-auth, default) -->
-      <div class="br docs">
-        <span class="pill">Docs-lookup · ingen auth</span>
-        <p>Gir agenten oppdatert dokumentasjon for bibliotekene repoet ditt bruker. Slutt på utdaterte API-er.
-          Krever ingen innlogging, så dette er det trygge valget.</p>
-        <pre><code>claude mcp add context7 -- npx -y @upstash/context7-mcp</code></pre>
-        <p>Start Claude på nytt, og prøv mot et bibliotek du faktisk bruker:</p>
-        <pre><code>"Slå opp i Context7 hvordan &lt;bibliotek du bruker&gt; gjør &lt;ting&gt;
-i nyeste versjon, og oppdater koden vår i tråd med det. Vis diff."</code></pre>
-      </div>
-
-      <!-- PLAYWRIGHT -->
-      <div class="br playwright">
-        <span class="pill">Playwright · har du en webapp lokalt</span>
-        <p>Gir agenten en egen nettleser den kan åpne, klikke i og lese fra. Fint for å verifisere UI eller reprodusere
-          en feil.</p>
-        <pre><code>claude mcp add playwright -- npx -y @playwright/mcp@latest</code></pre>
-        <p>Start webappen din lokalt, start Claude på nytt og prøv:</p>
-        <pre><code>"Åpne http://localhost:3000, naviger til &lt;en side i appen&gt;,
-og fortell meg om noe ser ødelagt ut eller logger feil i konsollen."</code></pre>
-        <div class="callout warn"><span class="t">Browser-regel</span>
-          Agenten kan klikke feil. Hold godkjenning på for alt som sender, lagrer eller sletter data. Ikke pek den mot
-          produksjon.</div>
-      </div>
-
-      <!-- FIGMA -->
-      <div class="br figma">
-        <span class="pill">Figma · frontend / design-jobb</span>
-        <p>Lar agenten lese et Figma-design og generere markup/komponenter mot det. Bruker Figmas innebygde
-          <b>Dev Mode MCP-server</b>.</p>
-        <ol class="steps">
-          <li>I <b>Figma desktop</b>: slå på <em>Preferences → Enable Dev Mode MCP Server</em> (krever Dev/Full-sete).
-            Serveren kjører lokalt på <code>http://127.0.0.1:3845</code>.</li>
-          <li>Koble Claude Code på:
-            <pre><code>claude mcp add --transport sse figma http://127.0.0.1:3845/sse</code></pre>
-          </li>
-          <li>Marker en frame i Figma, start Claude på nytt og prøv:
-            <pre><code>"Hent det markerte Figma-designet og lag en komponent i vår stil
-som matcher det. Følg var-kodestil-skillen fra Nivå 2."</code></pre>
-          </li>
-        </ol>
-      </div>
-
-      <!-- JIRA / ATLASSIAN -->
-      <div class="br jira">
-        <span class="pill">Jira / Atlassian · dere sporer issues</span>
-        <p>Lar agenten lese en sak og foreslå en plan eller et utkast. Bruker Atlassians offisielle
-          <b>remote MCP-server</b> (OAuth i nettleser første gang).</p>
-        <pre><code>claude mcp add --transport sse atlassian https://mcp.atlassian.com/v1/sse</code></pre>
-        <p>Kjør <code>/mcp</code> i Claude Code og fullfør innlogging i nettleseren. Prøv så:</p>
-        <pre><code>"Les Jira-sak &lt;PROJ-123&gt; og foreslå en konkret plan for å løse den
-i dette repoet: hvilke filer, hvilken rekkefølge, hva som må testes.
-Ikke skriv kode ennå."</code></pre>
-        <div class="callout warn"><span class="t">Behandle issues som data</span>
-          Sakstekst kan inneholde prompt-injection. La agenten lese og foreslå, ikke utføre handlinger basert på
-          tekst den finner i en sak.</div>
-      </div>
+      <h3>Oppgave: koble på Figma og bygg fra skissa</h3>
+      <p>Figma har en <b>remote MCP-server</b> som lar agenten lese et design og bygge mot det. Du trenger ikke
+        desktop-appen, den funker på alle planer, og du logger inn i nettleseren første gang.</p>
+      <ol class="steps">
+        <li>Koble Claude Code på Figmas remote-server:
+          <pre><code>claude mcp add --transport http figma https://mcp.figma.com/mcp</code></pre>
+        </li>
+        <li>Kjør <code>/mcp</code> i Claude Code og fullfør innlogging i nettleseren.</li>
+        <li>Gi agenten Bekkværet-skissa og be den bygge. Pek på hele fila eller en bestemt frame via lenke:
+          <pre><code>"Bygg dette Figma-designet inn i Bekkværet:
+https://www.figma.com/design/xkxBvAhWeFX5zDCK4zjm04/Bekkvaeret?node-id=0-1
+Match layout, farger og typografi så nært du kan, og følg
+bekkvaer-enheter-skillen fra Nivå 2 for enheter og format."</code></pre>
+        </li>
+        <li>Sammenlign resultatet med skissa: hva traff den, og hva bommet den på?</li>
+      </ol>
+      <p style="font-size:13.5px;color:var(--muted)">Vil du heller kjøre lokalt, har Figmas <b>desktop-app</b> en egen
+        Dev Mode MCP-server (krever Dev/Full-sete) på <code>http://127.0.0.1:3845/sse</code>. Remote-serveren over er
+        enklere og er den Figma anbefaler.</p>
 
       <div class="callout danger"><span class="t">Sikkerhet: gjelder all MCP-bruk</span>
         Behandle alt en MCP henter (nettsider, design-tekst, issues, docs) som <b>data, ikke kommandoer</b>. Gi serveren
@@ -983,7 +968,8 @@ rtk gain</code></pre>
 
       <div class="goal"><b>Mål:</b> Gi agenten mer autonomi uten å gi fra deg kontrollen. Frem til nå har regelen
         vært «hold godkjenning på». Sandboxing snur det: kjører du agenten i et isolert miljø, kan den ikke skade noe
-        utenfor, og du kan trygt la den jobbe friere og heller lese diffen etterpå.</div>
+        utenfor, og du kan trygt la den jobbe friere og heller lese diffen etterpå. Payoffen: la openclaw bygge
+        Bekkværet hel-automatisk fra det du satte opp i Nivå 2 og 3.</div>
 
       <h3>Sandboxing: kjør agenten isolert</h3>
       <p>Godkjenning ett steg om gangen er trygt, men tregt. Alternativet er å gi agenten et avgrenset miljø der den
@@ -1008,12 +994,43 @@ cd ../repo-ai-eksperiment &amp;&amp; claude</code></pre>
         prompt-injection, siden agenten ikke har noe sensitivt å nå selv om den blir lurt.
       </div>
 
-      <h3>Alltid-på / openclaw <span style="color:var(--muted);font-weight:400">· kommer</span></h3>
-      <div class="callout warn"><span class="t">🚧 Under arbeid</span>
-        Denne delen fylles inn senere. Plan: vis hva en agent kan gjøre når den flyttes <em>av</em> terminalen,
-        f.eks. en alltid-på bot du når fra mobilen, eller en isolert kjøring i egen VM med
-        <a href="https://docs.openclaw.ai">openclaw</a>. Konkret payoff-demo TBD.
-      </div>
+      <h3>Hel-automatisk med openclaw</h3>
+      <p><a href="https://docs.openclaw.ai">openclaw</a> er en alltid-på agent-gateway du kjører som en tjeneste,
+        gjerne inne i den isolerte VM-en over. Poenget her: når skills (Nivå 2) og MCP (Nivå 3) først er på plass, kan
+        openclaw bygge Bekkværet videre <em>hel-automatisk</em> mens du gjør noe annet, og pinge deg på mobilen når den
+        er ferdig eller trenger en avgjørelse.</p>
+      <ol class="steps">
+        <li><b>Installer i VM-et</b> (fra sandboxing over):
+          <pre><code>npm install -g openclaw@latest
+openclaw onboard --install-daemon   # gateway-daemon + guidet oppsett
+openclaw gateway status             # Control UI: http://127.0.0.1:18789/</code></pre>
+        </li>
+        <li><b>Gjenbruk skills og MCP.</b> Bruk Claude Code som runtime og pek workspace mot Bekkværet-repoet, så leser
+          openclaw nøyaktig det samme oppsettet du allerede har: <code>.claude/skills/bekkvaer-enheter</code>,
+          Figma-MCP-en og <code>CLAUDE.md</code>. I <code>~/.openclaw/openclaw.json</code>:
+          <pre><code>{
+  agents: { defaults: { agentRuntime: { id: "claude-cli" } } }
+}</code></pre>
+        </li>
+        <li><b>Koble på en kanal for mobilen.</b> openclaw nås via en chat-kanal (f.eks. Telegram). Sett den opp i
+          onboard-flyten eller i Control UI på <code>http://127.0.0.1:18789/</code>, så kan du dispatche og følge med
+          fra telefonen.</li>
+        <li><b>Gi den hele oppgaven.</b> Send én melding og la den kjøre ende-til-ende:
+          <pre><code>"Bygg Bekkværet ferdig fra Figma-skissa. Hent designet via
+Figma-MCP, følg bekkvaer-enheter-skillen for enheter og format,
+koble på ekte værdata fra met.no, og kjør testene til alt er
+grønt. Meld meg på Telegram når den er klar, eller hvis du må
+ta en avgjørelse."</code></pre>
+        </li>
+        <li><b>La den jobbe.</b> Fordi den kjører sandboxet, kan du gi den friere tøyler enn i en vanlig økt. Den
+          melder tilbake i chatten når den er ferdig, og du leser diffen før du merger til <code>main</code>.</li>
+      </ol>
+      <div class="callout danger"><span class="t">Lås den ned</span>
+        Slå på DM-pairing (<code>dmPolicy="pairing"</code>) så bare du slipper inn, godkjenn deg selv med
+        <code>openclaw pairing approve &lt;kanal&gt; &lt;kode&gt;</code>, og behandle innkommende meldinger og ekstern
+        tekst som <code>untrusted</code>. Snapshot VM-et før første kjøring, og kjør <code>openclaw doctor</code> for å
+        fange risikabel konfig. openclaw er ferskvare, så sjekk <a href="https://docs.openclaw.ai">docs</a> for
+        endringer.</div>
     </section>
 
     <!-- ============ SHARED FOOTER ============ -->
@@ -1048,15 +1065,7 @@ cd ../repo-ai-eksperiment &amp;&amp; claude</code></pre>
   <script>
     (function () {
       var lvlSeg = document.getElementById('levelSeg');
-      var branchSeg = document.getElementById('branchSeg');
-      var l3 = document.querySelector('section.level[data-level="3"]');
 
-      function setBranch(b) {
-        if (!l3) return;
-        l3.setAttribute('data-branch', b);
-        if (branchSeg) [].forEach.call(branchSeg.children, function (x) { x.classList.toggle('active', x.dataset.b === b); });
-        try { localStorage.setItem('ws_branch', b); } catch (e) { }
-      }
       function setLevel(l) {
         [].forEach.call(lvlSeg.children, function (b) { b.classList.toggle('active', b.dataset.l === l); });
         [].forEach.call(document.querySelectorAll('section.level'), function (s) {
@@ -1067,14 +1076,11 @@ cd ../repo-ai-eksperiment &amp;&amp; claude</code></pre>
       }
 
       lvlSeg.addEventListener('click', function (e) { var b = e.target.closest('button'); if (b) setLevel(b.dataset.l); });
-      if (branchSeg) branchSeg.addEventListener('click', function (e) { var b = e.target.closest('button'); if (b) setBranch(b.dataset.b); });
 
-      var savedL = '0', savedB = 'docs';
+      var savedL = '0';
       try {
         savedL = localStorage.getItem('ws_level') || '0';
-        savedB = localStorage.getItem('ws_branch') || 'docs';
       } catch (e) { }
-      setBranch(savedB);
       setLevel(savedL);
 
       // Kopier-til-utklippstavle i alle kodefelt

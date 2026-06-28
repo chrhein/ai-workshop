@@ -1,6 +1,6 @@
 # ADR 0004 — Skill-oppgaven: «følg-vår-kodestil» utledet fra egen repo
 
-**Status:** Vedtatt · **Dato:** 2026-06-28
+**Status:** Erstattet av [0007](0007-bekkvaeret-through-line.md) · **Dato:** 2026-06-28
 
 ## Kontekst
 Nivå 2 trenger ett konkret skill å bygge. Det må treffe arbeidshverdagen og fungere på vilkårlig repo (se [ADR 0003](0003-own-repo.md)).
