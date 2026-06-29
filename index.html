@@ -869,11 +869,21 @@ et par regler du skal følge. Hold det kort."</code></pre>
 ## Kommandoer
 - npm install · npm run dev · npm test
 
+## Mappestruktur
+- All kildekode under src/.
+
+## Terminologi
+- Oslo skal alltid kalles Skuret.
+- Trondheim skal alltid kalles Torget.
+
 ## Regler
-- Ikke bytt rammeverk eller legg til store avhengigheter uten å spørre.
-- All kildekode under src/.</code></pre>
-      <p>Test at den virker: start en ny økt og spør <em>«hvilken stack bruker dette prosjektet?»</em>. Agenten skal
-        svare fra <span class="ho claude"><code>CLAUDE.md</code></span><span class="ho copilot"><code>AGENTS.md</code></span> uten at du forklarer noe.</p>
+- Ikke bytt rammeverk eller legg til store avhengigheter uten å spørre.</code></pre>
+      <p>Legg merke til at stedsnavnene <b>Skuret</b> og <b>Torget</b> hører hjemme i instruksjonsfilen, fordi de
+        gjelder hele prosjektet uansett oppgave. Enheter som °C, m/s og mm/t legger vi i en <em>skill</em> i neste
+        steg, fordi de bare er relevante når agenten jobber med værdata.</p>
+      <p>Test at den virker: start en ny økt og spør <em>«hvilken stack bruker dette prosjektet?»</em> og
+        <em>«hva skal Oslo og Trondheim kalles?»</em>. Agenten skal svare fra
+        <span class="ho claude"><code>CLAUDE.md</code></span><span class="ho copilot"><code>AGENTS.md</code></span> uten at du forklarer noe.</p>
 
       <h3>2) Finn og installer skills</h3>
       <p><span class="pill">skills.sh</span> <a href="https://skills.sh">skills.sh</a> er en markedsplass for skills.
@@ -919,10 +929,25 @@ Enheter og format for all værdata i Bekkværet:
           <code>norsk-formatering</code>, enn én stor. Husk: én skill = én ferdighet.</li>
         <li><b>Grill skillen.</b> Kjør en <code>/grilling</code> (fra grill-me) mot utkastet:
           <em>«Er hver regel entydig? Mangler det enheter eller grensetilfeller, som vindstille, frost eller
-          manglende data?»</em></li>
+          manglende data?»</em>
+          <p>Se etter uklare regler:</p>
+          <ul>
+            <li>Hva viser vi ved manglende data?</li>
+            <li>Hvordan viser vi <code>0 m/s</code> — tall eller «vindstille»?</li>
+            <li>Skal temperatur avrundes? Til heltall?</li>
+            <li>Hvordan viser vi minusgrader — <code>-3 °C</code> eller <code>−3 °C</code>?</li>
+            <li>Skal nedbør vises som <code>0 mm/t</code> eller «ingen nedbør»?</li>
+            <li>Skal tidspunkt alltid vises i norsk tid (CET/CEST)?</li>
+          </ul>
+        </li>
         <li><b>Test at den lastes.</b> Start en ny oppgave: <em>«Legg til en 7-dagers oversikt i Bekkværet.»</em>
           Sjekk at agenten bruker m/s, °C, mm og norsk tid <b>uten at du gjentar det</b>, og at den nevner at den
-          brukte skillen.</li>
+          brukte skillen.
+          <p>Test også at den <b>ikke</b> lastes unødvendig. Start en helt annen oppgave:</p>
+          <pre><code>"Foreslå en bedre mappestruktur for kodebasen."</code></pre>
+          <p>Da trenger agenten fortsatt instruksjonsfilen (stack, regler, Skuret/Torget), men enhets-skillen skal
+            <em>ikke</em> aktiveres — den er irrelevant for arkitekturvalg.</p>
+        </li>
       </ol>
 
       <div class="callout tip"><span class="t">Hvorfor dette er nyttig på jobb</span>
@@ -935,6 +960,23 @@ Enheter og format for all værdata i Bekkværet:
         Du trenger strengt tatt ikke grill-me. Lag <code><span class="ho claude">.claude</span><span class="ho copilot">.github</span>/skills/bekkvaer-enheter/SKILL.md</code> for hånd med
         reglene over, og be agenten lese gjennom og foreslå grensetilfeller du har glemt.
       </div>
+
+      <hr>
+      <h3>Oppsummert</h3>
+      <p>Instruksjonsfiler og skills løser to ulike problemer:</p>
+      <ul>
+        <li><b>Instruksjonsfilen</b> (<span class="ho claude"><code>CLAUDE.md</code></span><span class="ho copilot"><code>AGENTS.md</code></span>) sier: «dette gjelder alltid i prosjektet.»</li>
+        <li><b>Skills</b> sier: «dette gjelder når du jobber med denne typen oppgave.»</li>
+      </ul>
+      <p>For Bekkværet betyr det:</p>
+      <ul>
+        <li>Skuret og Torget → instruksjonsfil (gjelder alltid)</li>
+        <li>React, TypeScript, Vite → instruksjonsfil (gjelder alltid)</li>
+        <li><code>src/</code> som kildekodemappe → instruksjonsfil (gjelder alltid)</li>
+        <li>Celsius, m/s, mm/t, norsk tid → skill (gjelder kun værdata-oppgaver)</li>
+      </ul>
+      <p>Samme mønster fungerer for valuta, datoformat, API-felter, feilmeldinger, domenebegreper, teststruktur
+        og PR-format.</p>
     </section>
 
     <!-- ============ NIVÅ 3 ============ -->
