@@ -1063,117 +1063,109 @@ bekkvaer-enheter-skillen fra Nivå 2 for enheter og format."</code></pre>
         <div class="level-badge">4</div>
         <div>
           <h2>Avansert bruk</h2>
-          <p class="sub">Tokens, sandboxing og alltid-på</p>
+          <p class="sub">Tokens, sandboxing og autonomi</p>
         </div>
       </div>
 
-      <div class="goal"><b>Mål:</b> To avanserte spor. Først <b>tokenoptimalisering</b>: hold konteksten slank så
-        svarene holder seg skarpe og billige. Så <b>autonomi</b>: kjør agenten isolert (sandboxing) og la den til
-        slutt bygge Bekkværet hel-automatisk med openclaw, fra det du satte opp i Nivå 2 og 3.</div>
+      <div class="goal"><b>Mål:</b> To avanserte spor. Først <b>tokenoptimalisering</b>: hvordan du holder konteksten
+        ren, slik at svarene blir skarpere og billigere. Deretter <b>autonomi</b>: hvordan du kjører agenten i et
+        isolert miljø (sandboxing) og til slutt lar den bygge Bekkværet helautomatisk med <code>openclaw</code>, basert
+        på oppsettet fra nivå 2 og 3.</div>
 
-      <h3>Tokenoptimalisering: hold konteksten slank</h3>
-      <p>Tokens er både <em>kostnad</em> og <em>kontekst-budsjett</em>. Fylles vinduet opp, blir svarene dårligere og
-        dyrere. Her er noen vaner, og et par verktøy som komprimerer dev-output automatisk.</p>
-      <h4>Generelle triks (gjør disse til vane)</h4>
+      <h3>Tokenoptimalisering: hold konteksten ren</h3>
+      <p>Tokens er både en kostnad og et budsjett for agentens «hukommelse». Når kontekstvinduet fylles opp, blir
+        svarene dårligere.</p>
+
+      <h4>Gode vaner</h4>
       <ul>
-        <li><b><code>/clear</code> mellom oppgaver.</b> Ny oppgave = tøm konteksten. Den forrige feilsøkingen hjelper
-          ikke den neste; den bare fyller vinduet.</li>
-        <li><b>Ikke dump hele filer</b> i prompten. Be agenten lese selv, eller pek på linjer/funksjoner.</li>
-        <li><b>Bruk subagents til store søk.</b> En subagent leser 40 filer og returnerer bare konklusjonen, så
+        <li><b>Start med blanke ark.</b> Bruk <code>/clear</code> mellom oppgaver. Kunnskap fra forrige feilsøking
+          hjelper sjelden på neste oppgave, den bare fyller opp konteksten med unødvendig støy.</li>
+        <li><b>Ikke dump inn hele filer.</b> Be agenten lese filen selv, eller pek på spesifikke funksjoner eller
+          linjer.</li>
+        <li><b>Bruk sub-agenter.</b> En sub-agent kan lese 40 filer og returnere kun konklusjonen, slik at
           hovedkonteksten din holdes ren.</li>
-        <li><b>Vær spesifikk.</b> En presis prompt sparer en runde med oppklaring (og en runde med tokens).</li>
+        <li><b>Vær presis.</b> En presis prompt sparer en runde med oppklaringer, og dermed en runde med tokens.</li>
       </ul>
-      <h4>rtk: Rust Token Killer <span style="color:var(--muted);font-weight:400">· demo</span></h4>
-      <p>Mye av token-bruken i dev går til output fra kommandoer som <code>git status</code>, <code>git diff</code>,
-        <code>npm test</code> og <code>ls</code>. <b>rtk</b> er en CLI-proxy som komprimerer den outputen før den når
-        konteksten, uten å miste informasjonen agenten faktisk trenger.</p>
-      <div class="card">
-        <b>Se forskjellen (live på skjerm):</b>
-        <pre><code># Samme operasjon, før og etter:
-git status            →  ~XXX tokens
-rtk git status        →  ~XX tokens   (60-90 % mindre)
 
-# Akkumulert besparelse over økten:
-rtk gain</code></pre>
-        <p style="font-size:13.5px;color:var(--muted);margin-bottom:0">Poenget er ikke ett enkelt kall, men summen:
-          over en hel arbeidsdag med hundrevis av kommandoer blir det mye spart kontekst (= bedre svar) og mye spart
-          kostnad.</p>
-      </div>
-      <h4>context-mode <span style="color:var(--muted);font-weight:400">· plugin / MCP</span></h4>
-      <p>Et beslektet verktøy som angriper samme problem fra en annen vinkel:
-        <a href="https://github.com/mksglu/context-mode">context-mode</a>. Der rtk komprimerer kommando-output, kjører
-        context-mode store tool-outputs i en isolert subprosess slik at bare det relevante havner i konteksten
-        (utviklerne oppgir opptil 98 % mindre), og holder et sesjonsminne så agenten ikke glemmer hvilke filer og
-        oppgaver som er aktive når samtalen komprimeres. Den finnes som Claude Code-plugin (marketplace) eller
-        MCP-server.</p>
-      <div class="callout tip"><span class="t">Take-away</span>
-        Du trenger ikke disse verktøyene for å jobbe smart; vanene over tar deg langt. Men når du merker at lange økter
-        blir trege eller «glemsomme», er det som regel et kontekst-budsjett-problem. Da er verktøy som <b>rtk</b> og
-        <b>context-mode</b> løsninger verdt å kjenne til.
+      <h4>Verktøy for komprimering</h4>
+      <p>Mye av token-bruken i utvikling kommer fra output fra kommandoer som <code>git status</code>,
+        <code>git diff</code>, <code>npm test</code> og <code>ls</code>.</p>
+      <p>Verktøy som <b>rtk</b> (Rust Token Killer) og <b>context-mode</b> kan komprimere denne outputen før den når
+        konteksten, uten å miste informasjonen agenten trenger.</p>
+      <p>Forskjellen er merkbar, spesielt over tid:</p>
+      <pre><code># Før og etter med rtk
+git status      # → ca. 300 tokens
+rtk git status  # → ca. 30 tokens (90 % mindre)</code></pre>
+      <p>Poenget er ikke én enkelt kommando, men summen over en hel arbeidsdag. Mindre kontekst gir bedre svar og
+        lavere kostnad.</p>
+
+      <div class="callout tip"><span class="t">Oppsummert</span>
+        Gode vaner tar deg langt. Men når du merker at lange økter gjør agenten treg eller «glemsk», skyldes det som
+        regel at kontekstvinduet er fullt. Da er verktøy som <b>rtk</b> og <b>context-mode</b> verdt å kjenne til.
       </div>
 
       <hr>
 
-      <h3>Sandboxing: kjør agenten isolert</h3>
-      <p>Godkjenning ett steg om gangen er trygt, men tregt. Alternativet er å gi agenten et avgrenset miljø der den
-        ikke <em>kan</em> gjøre skade, og så slippe den løsere. Tre nivåer av isolasjon, fra lett til tungt:</p>
-      <ul>
-        <li><b>Git worktree</b> (lettest). En egen utsjekk av repoet i en separat mappe. La agenten jobbe der, så er
-          hovedmappa di urørt, og du kan kjøre flere agenter parallelt uten at de tråkker på hverandre.
-          <pre><code>git worktree add ../repo-ai-eksperiment -b ai-eksperiment
-cd ../repo-ai-eksperiment &amp;&amp; <span class="ho claude">claude</span><span class="ho copilot">copilot</span></code></pre>
+      <h3>Autonomi: la agenten jobbe alene</h3>
+
+      <h4>Sandboxing: kjør agenten isolert</h4>
+      <p>Godkjenning for hvert steg er trygt, men det er også tregt.</p>
+      <p>Alternativet er å gi agenten et avgrenset miljø der den ikke kan gjøre skade. Da kan du slippe den mer løs.</p>
+      <p>Tre nivåer av isolasjon:</p>
+      <ol>
+        <li><b>Git worktree (lett).</b> En egen utsjekk av repoet i en separat mappe. La agenten jobbe der, så forblir
+          hovedmappen din urørt.
+          <pre><code>git worktree add ../bekkvaeret-ai -b ai-eksperiment</code></pre>
         </li>
-        <li><b>Container / devcontainer</b> (anbefalt). Kjør agenten inne i en Docker-container med kun repoet
-          montert og brannmur på nettverket. Da når den verken hjemmemappa, nøkler eller resten av maskinen.
-          Anthropic har f.eks. en ferdig <a href="https://docs.claude.com/en/docs/claude-code/devcontainer">devcontainer-referanse for Claude Code</a>
-          du kan ta utgangspunkt i.</li>
-        <li><b>Isolert VM</b> (tyngst). Full separasjon på egen virtuell maskin (f.eks. Lume på Apple Silicon). Alt
-          agenten gjør blir værende i VM-et, og du kan snapshotte før du gir den tilgang og rulle tilbake hvis noe går
-          galt. Dette er ruta som openclaw-oppsettet under bruker.</li>
-      </ul>
-      <div class="callout tip"><span class="t">Hvorfor dette låser opp autonomi</span>
-        Når miljøet er sandboxet, er nedsiden ved en feil liten: kast worktreen, drep containeren, rull tilbake VM-et.
-        Da kan du la agenten kjøre lengre flyter uten å sitte og godkjenne hvert steg. Det er også det beste vernet mot
-        prompt-injection, siden agenten ikke har noe sensitivt å nå selv om den blir lurt.
+        <li><b>Container (anbefalt).</b> Kjør agenten i en Docker-container. Monter kun repo-mappen og sett opp
+          brannmur mot nettverket. Da når agenten verken hjemmemappen din, nøkler eller resten av maskinen.</li>
+        <li><b>Isolert VM (tungt).</b> Full separasjon på en egen virtuell maskin. Alt agenten gjør, forblir i VM-en.
+          Du kan ta et snapshot før du starter, og rulle tilbake hvis noe går galt.</li>
+      </ol>
+
+      <div class="callout tip"><span class="t">Hvorfor dette gir autonomi</span>
+        Når miljøet er trygt, er nedsiden ved en feil liten. Du kan kaste worktree-en, stoppe containeren eller rulle
+        tilbake VM-en. Dette lar deg gi agenten større oppgaver og lengre arbeidsøkter uten å måtte godkjenne hvert
+        eneste steg. Det er også det beste vernet mot prompt injection, siden agenten uansett ikke har tilgang til noe
+        sensitivt.
       </div>
 
-      <h3>Hel-automatisk med openclaw</h3>
-      <p><a href="https://docs.openclaw.ai">openclaw</a> er en alltid-på agent-gateway du kjører som en tjeneste,
-        gjerne inne i den isolerte VM-en over. Poenget her: når skills (Nivå 2) og MCP (Nivå 3) først er på plass, kan
-        openclaw bygge Bekkværet videre <em>hel-automatisk</em> mens du gjør noe annet, og pinge deg på mobilen når den
-        er ferdig eller trenger en avgjørelse.</p>
-      <ol class="steps">
-        <li><b>Installer i VM-et</b> (fra sandboxing over):
-          <pre><code>npm install -g openclaw@latest
-openclaw onboard --install-daemon   # gateway-daemon + guidet oppsett
-openclaw gateway status             # Control UI: http://127.0.0.1:18789/</code></pre>
-        </li>
-        <li><b>Gjenbruk skills og MCP.</b> Bruk Claude Code som runtime og pek workspace mot Bekkværet-repoet, så leser
-          openclaw nøyaktig det samme oppsettet du allerede har: <code>.claude/skills/bekkvaer-enheter</code>,
-          Figma-MCP-en og <code>CLAUDE.md</code>. I <code>~/.openclaw/openclaw.json</code>:
-          <pre><code>{
-  agents: { defaults: { agentRuntime: { id: "claude-cli" } } }
-}</code></pre>
-        </li>
-        <li><b>Koble på en kanal for mobilen.</b> openclaw nås via en chat-kanal (f.eks. Telegram). Sett den opp i
-          onboard-flyten eller i Control UI på <code>http://127.0.0.1:18789/</code>, så kan du dispatche og følge med
-          fra telefonen.</li>
-        <li><b>Gi den hele oppgaven.</b> Send én melding og la den kjøre ende-til-ende:
-          <pre><code>"Bygg Bekkværet ferdig fra Figma-skissa. Hent designet via
+      <h4>Helautomatisk med openclaw</h4>
+      <p><a href="https://docs.openclaw.ai"><code>openclaw</code></a> er en alltid-på agent-gateway du kan kjøre som en
+        tjeneste, gjerne i den isolerte VM-en fra steget over.</p>
+      <p>Når instruksjonsfilen (nivå 2), skills (nivå 2) og MCP (nivå 3) er på plass, kan <code>openclaw</code> bygge
+        Bekkværet videre helt automatisk mens du gjør noe annet.</p>
+      <p>Slik fungerer det:</p>
+      <ol>
+        <li><b>Installer <code>openclaw</code></b> i et isolert miljø (VM).</li>
+        <li><b>Konfigurer den</b> til å bruke det samme oppsettet du allerede har laget: instruksjonsfil, skills og
+          Figma-MCP.</li>
+        <li><b>Koble den til en chat-kanal</b> (f.eks. Telegram), slik at den kan varsle deg.</li>
+        <li><b>Gi den hele oppgaven</b> i én melding og la den jobbe.</li>
+      </ol>
+      <pre><code>"Bygg Bekkværet ferdig fra Figma-skissen. Hent designet via
 Figma-MCP, følg bekkvaer-enheter-skillen for enheter og format,
 koble på ekte værdata fra met.no, og kjør testene til alt er
 grønt. Meld meg på Telegram når den er klar, eller hvis du må
 ta en avgjørelse."</code></pre>
-        </li>
-        <li><b>La den jobbe.</b> Fordi den kjører sandboxet, kan du gi den friere tøyler enn i en vanlig økt. Den
-          melder tilbake i chatten når den er ferdig, og du leser diffen før du merger til <code>main</code>.</li>
-      </ol>
-      <div class="callout danger"><span class="t">Lås den ned</span>
-        Slå på DM-pairing (<code>dmPolicy="pairing"</code>) så bare du slipper inn, godkjenn deg selv med
-        <code>openclaw pairing approve &lt;kanal&gt; &lt;kode&gt;</code>, og behandle innkommende meldinger og ekstern
-        tekst som <code>untrusted</code>. Snapshot VM-et før første kjøring, og kjør <code>openclaw doctor</code> for å
-        fange risikabel konfig. openclaw er ferskvare, så sjekk <a href="https://docs.openclaw.ai">docs</a> for
-        endringer.</div>
+      <p>Fordi <code>openclaw</code> kjører i et sandboxed miljø, kan du gi den friere tøyler enn i en vanlig økt. Den
+        melder fra i chatten når den er ferdig, og du kan lese gjennom diffen før du merger til <code>main</code>.</p>
+
+      <div class="callout danger"><span class="t">Sikkerhet</span>
+        Lås <code>openclaw</code>-gatewayen slik at bare du har tilgang. Behandle alle innkommende meldinger og ekstern
+        tekst som upålitelig. Ta snapshot av VM-en før du starter, og bruk <code>openclaw doctor</code> for å sjekke
+        for usikker konfigurasjon.</div>
+
+      <hr>
+
+      <div class="callout tip"><span class="t">Oppsummert</span>
+        <ul style="margin:8px 0 0;padding-left:20px">
+          <li><b>Tokenoptimalisering</b> gir deg bedre og billigere svar.</li>
+          <li><b>Sandboxing</b> gir deg tryggheten til å la agenten jobbe mer autonomt.</li>
+          <li><b><code>openclaw</code></b> lar deg sette alt i system og delegere hele oppgaver til en agent som bruker
+            oppsettet du har definert.</li>
+        </ul>
+      </div>
     </section>
 
     <!-- ============ SHARED FOOTER ============ -->
