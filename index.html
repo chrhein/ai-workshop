@@ -45,7 +45,7 @@
     }
 
     header.hero {
-      padding: 48px 0 24px;
+      padding: 48px 0 12px;
       border-bottom: 1px solid var(--line)
     }
 
@@ -79,7 +79,7 @@
       background: rgba(255, 255, 255, .86);
       backdrop-filter: blur(10px);
       border-bottom: 1px solid var(--line);
-      padding: 12px 0
+      padding: 12px 0 16px
     }
 
     .controls .wrap {
@@ -461,10 +461,10 @@
 
   <header class="hero">
     <div class="wrap">
-      <span class="kicker">Sommerjobb · AI-utviklerverktøy</span>
-      <h1>AI i utviklerhverdagen</h1>
-      <p class="lede">Fem korte, praktiske nivåer i Claude Code. Gjennom hele bygger vi det samme produktet:
-        <b>Bekkværet</b>, en liten værmeldingstjeneste. Teorien tok vi i presentasjonen; her gjør vi det.</p>
+      <span class="kicker">Sommerjobb</span>
+      <h1>AI-workshop</h1>
+      <p class="lede">I denne workshoppen lager vi værmeldingstjenesten <b>Bekkværet</b> med god hjelp av
+        AI-verktøy.</p>
     </div>
   </header>
 
@@ -478,12 +478,9 @@
             <button data-l="1">1 · Tips</button>
             <button data-l="2">2 · Skills</button>
             <button data-l="3">3 · MCP</button>
-            <button data-l="4">4 · Tokenoptimalisering</button>
-            <button data-l="5">5 · Avansert bruk</button>
+            <button data-l="4">4 · Avansert bruk</button>
           </div>
         </div>
-        <p class="clienthint">Verktøy: <b>Claude Code</b> (Desktop-appen eller terminalen). Prosjekt:
-          <b>Bekkværet</b>, værtjenesten vi bygger sammen.</p>
       </div>
     </div>
   </div>
@@ -907,16 +904,19 @@ bekkvaer-enheter-skillen fra Nivå 2 for enheter og format."</code></pre>
       <div class="level-head">
         <div class="level-badge">4</div>
         <div>
-          <h2>Tokenoptimalisering</h2>
-          <p class="sub">Hold konteksten slank</p>
+          <h2>Avansert bruk</h2>
+          <p class="sub">Tokens, sandboxing og alltid-på</p>
         </div>
       </div>
 
-      <div class="goal"><b>Mål:</b> Tokens er både <em>kostnad</em> og <em>kontekst-budsjett</em>. Fylles vinduet opp,
-        blir svarene dårligere og dyrere. Her lærer du å holde det slankt, og ser et par verktøy som komprimerer
-        dev-output automatisk.</div>
+      <div class="goal"><b>Mål:</b> To avanserte spor. Først <b>tokenoptimalisering</b>: hold konteksten slank så
+        svarene holder seg skarpe og billige. Så <b>autonomi</b>: kjør agenten isolert (sandboxing) og la den til
+        slutt bygge Bekkværet hel-automatisk med openclaw, fra det du satte opp i Nivå 2 og 3.</div>
 
-      <h3>Generelle triks (gjør disse til vane)</h3>
+      <h3>Tokenoptimalisering: hold konteksten slank</h3>
+      <p>Tokens er både <em>kostnad</em> og <em>kontekst-budsjett</em>. Fylles vinduet opp, blir svarene dårligere og
+        dyrere. Her er noen vaner, og et par verktøy som komprimerer dev-output automatisk.</p>
+      <h4>Generelle triks (gjør disse til vane)</h4>
       <ul>
         <li><b><code>/clear</code> mellom oppgaver.</b> Ny oppgave = tøm konteksten. Den forrige feilsøkingen hjelper
           ikke den neste; den bare fyller vinduet.</li>
@@ -925,8 +925,7 @@ bekkvaer-enheter-skillen fra Nivå 2 for enheter og format."</code></pre>
           hovedkonteksten din holdes ren.</li>
         <li><b>Vær spesifikk.</b> En presis prompt sparer en runde med oppklaring (og en runde med tokens).</li>
       </ul>
-
-      <h3>rtk: Rust Token Killer <span style="color:var(--muted);font-weight:400">· demo</span></h3>
+      <h4>rtk: Rust Token Killer <span style="color:var(--muted);font-weight:400">· demo</span></h4>
       <p>Mye av token-bruken i dev går til output fra kommandoer som <code>git status</code>, <code>git diff</code>,
         <code>npm test</code> og <code>ls</code>. <b>rtk</b> er en CLI-proxy som komprimerer den outputen før den når
         konteksten, uten å miste informasjonen agenten faktisk trenger.</p>
@@ -942,7 +941,7 @@ rtk gain</code></pre>
           over en hel arbeidsdag med hundrevis av kommandoer blir det mye spart kontekst (= bedre svar) og mye spart
           kostnad.</p>
       </div>
-      <h3>context-mode <span style="color:var(--muted);font-weight:400">· plugin / MCP</span></h3>
+      <h4>context-mode <span style="color:var(--muted);font-weight:400">· plugin / MCP</span></h4>
       <p>Et beslektet verktøy som angriper samme problem fra en annen vinkel:
         <a href="https://github.com/mksglu/context-mode">context-mode</a>. Der rtk komprimerer kommando-output, kjører
         context-mode store tool-outputs i en isolert subprosess slik at bare det relevante havner i konteksten
@@ -954,22 +953,8 @@ rtk gain</code></pre>
         blir trege eller «glemsomme», er det som regel et kontekst-budsjett-problem. Da er verktøy som <b>rtk</b> og
         <b>context-mode</b> løsninger verdt å kjenne til.
       </div>
-    </section>
 
-    <!-- ============ NIVÅ 5 ============ -->
-    <section class="level" data-level="5">
-      <div class="level-head">
-        <div class="level-badge">5</div>
-        <div>
-          <h2>Avansert bruk</h2>
-          <p class="sub">Sandboxing og alltid-på</p>
-        </div>
-      </div>
-
-      <div class="goal"><b>Mål:</b> Gi agenten mer autonomi uten å gi fra deg kontrollen. Frem til nå har regelen
-        vært «hold godkjenning på». Sandboxing snur det: kjører du agenten i et isolert miljø, kan den ikke skade noe
-        utenfor, og du kan trygt la den jobbe friere og heller lese diffen etterpå. Payoffen: la openclaw bygge
-        Bekkværet hel-automatisk fra det du satte opp i Nivå 2 og 3.</div>
+      <hr>
 
       <h3>Sandboxing: kjør agenten isolert</h3>
       <p>Godkjenning ett steg om gangen er trygt, men tregt. Alternativet er å gi agenten et avgrenset miljø der den
@@ -1081,6 +1066,7 @@ ta en avgjørelse."</code></pre>
       try {
         savedL = localStorage.getItem('ws_level') || '0';
       } catch (e) { }
+      if (!document.querySelector('section.level[data-level="' + savedL + '"]')) savedL = '0';
       setLevel(savedL);
 
       // Kopier-til-utklippstavle i alle kodefelt

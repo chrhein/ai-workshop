@@ -16,8 +16,7 @@ Beholder visuell stil og nivå-oppsett fra forrige workshop, men **dropper lever
 | **1** | Agent-loopen + gode vaner | ~15 min | Fem vaner (branch, plan, kontekst, harness-tilgang, presise prompter) + Spec-Driven Development (spec-kit). Ingen egen task |
 | **2** | Skills | ~35 min | Intro (CLAUDE.md vs skill vs slash) + lås stacken i CLAUDE.md + skills.sh + bygg konvensjons-skill(s) for Bekkværet: m/s, °C, norsk tid, mm/t |
 | **3** | MCP | ~30 min | Eksempelliste over MCP-servere + oppgave: koble på Figma og bygg Bekkværet fra skissa |
-| **4** | Tokenoptimalisering | ~15 min | Vane-triks + rtk + context-mode |
-| **5** | Avansert bruk | ~15 min | Sandboxing (worktree/container/VM) + openclaw (plassholder) |
+| **4** | Avansert bruk | ~25 min | Tokenoptimalisering (vane-triks, rtk, context-mode) + sandboxing (worktree/container/VM) + openclaw som bygger Bekkværet hel-automatisk |
 
 2 timer er stramt. «Før vi begynner» og Nivå 4/5 er bevisst fleksible, så de kan trimmes uten å ødelegge kjernen (Tips, Skills, MCP).
 
