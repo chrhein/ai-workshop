@@ -1020,14 +1020,15 @@ Enheter og format for all værdata i Bekkværet:
       <p>Inne i Claude Code kan du også bruke:</p>
       <pre><code>/mcp</code></pre>
       <p>Da ser du status og hvilke verktøy MCP-serveren tilbyr.</p></div>
-      <div class="ho copilot"><pre><code># Interaktivt inne i Copilot:
-/mcp add               # velg navn, type (Local/HTTP/SSE), kommando/url
-
-# eller legg den i ~/.copilot/mcp-config.json:
-{ "mcpServers": { "&lt;navn&gt;": {
-  "type": "http", "url": "&lt;url&gt;" } } }
-
-/mcp                   # i Copilot: se serverne og status</code></pre></div>
+      <div class="ho copilot"><pre><code>copilot mcp add &lt;navn&gt; -- &lt;kommando som starter serveren&gt;</code></pre>
+      <p>For en remote MCP-server legger du den i <code>~/.copilot/mcp-config.json</code>:</p>
+      <pre><code>{ "mcpServers": { "&lt;navn&gt;": {
+  "type": "http", "url": "&lt;url&gt;", "tools": ["*"] } } }</code></pre>
+      <p>Se hva som er koblet på:</p>
+      <pre><code>copilot mcp show</code></pre>
+      <p>Inne i Copilot kan du også bruke:</p>
+      <pre><code>/mcp</code></pre>
+      <p>Da ser du status og hvilke verktøy MCP-serveren tilbyr.</p></div>
 
       <h3>Et hav av servere</h3>
       <p>Det finnes mange MCP-servere. Mange verktøy du bruker i utviklerhverdagen har allerede en MCP-integrasjon.</p>
@@ -1055,10 +1056,10 @@ Enheter og format for all værdata i Bekkværet:
       <h3>1. Koble på Figma</h3>
       <p>Kjør:</p>
       <div class="ho claude"><pre><code>claude mcp add --transport http figma https://mcp.figma.com/mcp</code></pre></div>
-      <div class="ho copilot"><pre><code># I Copilot: /mcp add → type HTTP → url https://mcp.figma.com/mcp
-# eller i ~/.copilot/mcp-config.json:
-{ "mcpServers": { "figma": {
-  "type": "http", "url": "https://mcp.figma.com/mcp" } } }</code></pre></div>
+      <div class="ho copilot"><p>Legg figma i <code>~/.copilot/mcp-config.json</code>:</p>
+      <pre><code>{ "mcpServers": { "figma": {
+  "type": "http", "url": "https://mcp.figma.com/mcp", "tools": ["*"] } } }</code></pre>
+      <p>Eller interaktivt: <code>/mcp add</code> → type <b>HTTP</b> → url <code>https://mcp.figma.com/mcp</code></p></div>
       <p>Start <span class="ho claude">Claude Code</span><span class="ho copilot">Copilot</span> og kjør:</p>
       <pre><code>/mcp</code></pre>
       <p>Fullfør innloggingen i nettleseren hvis du blir bedt om det.</p>
