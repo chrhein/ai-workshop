@@ -42,11 +42,11 @@
     .wrap {
       max-width: 920px;
       margin: 0 auto;
-      padding: 0 20px 96px
+      padding: 0 20px 42px
     }
 
     header.hero {
-      padding: 48px 0 12px;
+      padding: 48px 0 0;
       border-bottom: 1px solid var(--line)
     }
 
@@ -80,7 +80,7 @@
       background: rgba(255, 255, 255, .86);
       backdrop-filter: blur(10px);
       border-bottom: 1px solid var(--line);
-      padding: 12px 0 16px
+      padding: 12px 0 20px
     }
 
     .controls .wrap {
@@ -152,7 +152,7 @@
 
     section.level {
       display: none;
-      padding-top: 30px
+      padding-top: 60px
     }
 
     section.level.active {
@@ -509,6 +509,38 @@
 
     .harness-sel:hover {
       background-color: var(--panel-2)
+    }
+
+    @media (max-width: 780px) {
+      .ctl-row {
+        gap: 14px
+      }
+
+      .ctl-group {
+        min-width: 0;
+        max-width: 100%
+      }
+
+      .harness-group {
+        margin-left: 0
+      }
+
+      .seg.levels {
+        max-width: 100%;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none
+      }
+
+      .seg.levels::-webkit-scrollbar {
+        display: none
+      }
+
+      .seg button {
+        flex: 0 0 auto;
+        padding: 7px 12px;
+        font-size: 13.5px
+      }
     }
 
     /* harness-spesifikt innhold (vises kun for valgt harness) */
