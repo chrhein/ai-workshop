@@ -892,6 +892,11 @@ et par regler du skal følge. Hold det kort."</code></pre>
       <p>Bla i katalogen og se hva som finnes. Til oppgaven under henter vi <code>grill-me</code>, som vi bruker til å
         stress-teste skillen vår:</p>
       <pre><code>npx skills add https://github.com/mattpocock/skills --skill grill-me</code></pre>
+      <div class="callout tip"><span class="t">Global installasjon</span>
+        <p>Noen skills er nyttige på tvers av prosjekter eller kunder, ikke bare i ett repo. Legg dem
+          <b>globalt</b> med <code>-g</code>, så er de tilgjengelige uansett hvilket prosjekt du jobber i:</p>
+        <pre><code>npx skills add &lt;repo-url&gt; --skill &lt;skill-navn&gt; -g</code></pre>
+      </div>
 
       <h3>3) Bygg konvensjons-skill(s) for Bekkværet</h3>
       <p>En værtjeneste lever av <em>konsistente</em> enheter og formater. I stedet for å gjenta «vind i m/s, temp i
